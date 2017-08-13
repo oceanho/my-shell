@@ -52,8 +52,5 @@ function del_user_from_file
        echo "Cancel."
        return
     fi
-    for user  in `cat $str_file_name`
-    do
-       del_user $user
-    done
+    del_user $(cat $str_file_name |xargs)
 }
