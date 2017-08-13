@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # A tool scripts for user manager
-# Added By hehai(admin@oceanho.com) at 2017-08-12
+# Added By OceanHo(gzhehai@foxmail.com) at 2017-08-12
 #
 
 # delete users
@@ -38,10 +38,10 @@ function _get_users
 # delete users from a file
 function del_user_from_file
 {
-    echo -n "请输入需要删除用户的用户名列表文件: "
+    echo -n "Input want delete username file: "
     read str_file_name
     if [ ! -f $str_file_name ]; then
-       echo "找不到文件：$str_file_name,请先生成需要删除用户的用户名列表文件."
+       echo "No file：$str_file_name."
        return
     fi
     echo "It will be delete fllowing users."
