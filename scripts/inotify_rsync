@@ -13,8 +13,8 @@ Rsync_SvrInfo=$2
 # Rsync Server Password. It's Can be a file or text
 Rsync_Password=$3
 
-# Rsync to Client RATE limit. defualts 2048.
-Rsync_BWlimit=2048
+# Rsync to Client RATE limit. defualts 20MB/s.
+Rsync_BWlimit=20
 
 # Basic Check
 if [ -z $Watch_Dir ] ; then
