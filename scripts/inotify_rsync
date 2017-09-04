@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# inotify files and execute rsync 
+# Use inotify-tools to watch files and rsync data
+# Created by OceanHo(gzhehai@foxmail.com) at 2017-09-04
 #
 
 # Watch Dir
