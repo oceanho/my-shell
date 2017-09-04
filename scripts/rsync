@@ -16,7 +16,7 @@ help()
 # start rsync if not running
 start()
 {
-  if [ ! -f ${RSYNCD_PID_FILE} ];then
+  if [ ! -f ${RSYNCD_PID_FILE} ] ; then
      rsync --daemon
   fi
   status
@@ -25,7 +25,7 @@ start()
 # stop rsync if running
 stop()
 {
-  if [ -f ${RSYNCD_PID_FILE} ];then
+  if [ -f ${RSYNCD_PID_FILE} ] ; then
      kill `cat ${RSYNCD_PID_FILE}` >/dev/null 2>&1
      rm -f ${RSYNCD_PID_FILE} >/dev/null 2>&1
   fi
@@ -42,13 +42,15 @@ restart()
 # show status
 status()
 {
-   if [ -f ${RSYNCD_PID_FILE} ];then
-      echo "rsync is running. PID[`cat ${RSYNCD_PID_FILE}`]"
+   sleep 1
+   if [ -f ${RSYNCD_PID_FILE} ] ; then
+      echo "Rsync is running. PID[`cat ${RSYNCD_PID_FILE}`]"
    else
-      echo "rsync not run." # Start rsync services use: $0 start
+      echo "Rsync not run." # Start rsync services use: $0 start
    fi
 }
-if [ -z $action ];then
+
+if [ -z $action ] ; then
    help
    exit 0
 fi
