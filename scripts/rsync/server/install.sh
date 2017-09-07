@@ -34,7 +34,7 @@ if [ ! $? -eq 0 ] ; then
    else
       echo "done."
    fi
-then
+fi
 
 # 01. Create run rsync's User & Group
 id $Rsync_Server_UID >/dev/null 2>&1
