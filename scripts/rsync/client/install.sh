@@ -7,6 +7,8 @@
 Auth_PasswordFile="/etc/rsync.password"
 Process_LogFile="/tmp/oceanh_yum-install-rsync.log"
 
+Process_ConfigureMode="force"
+
 # Basic check
 if [ ! -f "./rsync.password" ] ; then
    echo "missing file rsync.password in `pwd`"

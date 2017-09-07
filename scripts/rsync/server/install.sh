@@ -24,11 +24,11 @@ if [ ! -f "./rsyncd.conf" ] ; then
 fi
 
 # Check & install rsync if need do.
-rpm -q rsyncd >/dev/null 2>&1
+rpm -q rsync >/dev/null 2>&1
 if [ ! $? -eq 0 ] ; then
    echo "installing rsync."
    yum install rsync -y >$Process_LogFile 2>&1
-   if [ ! $? -eq 1 ] ; then
+   if [ ! $? -eq 0 ] ; then
       echo "Install rsync failed. Messages: `cat $Process_LogFile`"
       exit 1
    else
