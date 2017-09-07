@@ -38,6 +38,7 @@ if [ -f $Auth_PasswordFile ] ; then
    chmod 600 $Auth_PasswordFile && chown root.root $Auth_PasswordFile
    if [ ! $? -eq 0 ] ; then
       echo "Rsync's Password process failed."
-      exit 0
+      exit 1
    fi
 fi
+exit 0
