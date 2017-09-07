@@ -1,0 +1,26 @@
+#
+# This is a file for rsync's server conf
+# Created by OceanHo(gzhehai@foxmail.com)
+#
+
+uid = rsync
+gid = rsync
+
+use chroot = no
+max connections = 200
+timeout = 300
+
+pid file = /var/run/rsync.pid
+lock file = /var/run/rsync.lock
+log file = /var/log/rsync.log
+
+ignore errors
+read only = false
+list = false
+hosts allow = 172.16.1.0/24
+
+secerts file = /etc/rsync.password
+
+[backup]
+path = /data
+comment = "backup"
