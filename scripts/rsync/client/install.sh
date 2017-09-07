@@ -39,4 +39,5 @@ if [ -f $Auth_PasswordFile ] ; then
    if [ ! $? -eq 0 ] ; then
       echo "Rsync's Password process failed."
       exit 0
+   fi
 fi
