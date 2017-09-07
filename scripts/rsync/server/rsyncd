@@ -1,0 +1,77 @@
+#!/bin/bash
+# chkconfig:3 08 90
+#
+# The rsync Service Manager 
+# Create by Ocean(gzhehai@foxmail.com) at 2017-08-30
+#
+
+action="$1"
+RSYNCD_PID_FILE="/var/run/rsyncd.pid"
+# show help
+help()
+{
+   echo "Usage[start/restart/stop]"
+}
+
+# start rsync if not running
+start()
+{
+  if [ ! -f ${RSYNCD_PID_FILE} ] ; then
+     rsync --daemon
+  fi
+  status
+}
+
+# stop rsync if running
+stop()
+{
+  if [ -f ${RSYNCD_PID_FILE} ] ; then
+     kill `cat ${RSYNCD_PID_FILE}` >/dev/null 2>&1
+     rm -f ${RSYNCD_PID_FILE} >/dev/null 2>&1
+  fi
+}
+
+# restart rsync
+restart()
+{
+   stop;
+   sleep 1;
+   start;
+}
+
+# show status
+status()
+{
+   sleep 1
+   if [ -f ${RSYNCD_PID_FILE} ] ; then
+      echo "Rsync is running. PID[`cat ${RSYNCD_PID_FILE}`]"
+   else
+      echo "Rsync not run." # Start rsync services use: $0 start
+   fi
+}
+
+if [ -z $action ] ; then
+   help
+   exit 0
+fi
+
+case $action in
+   help)
+      help
+   ;;
+   start)
+      start
+   ;;
+   stop)
+      stop
+   ;;
+   restart)
+      restart
+   ;;
+   status)
+      status
+   ;;
+   *)
+   help
+   ;;
+esac
