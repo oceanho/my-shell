@@ -24,7 +24,7 @@ if [ ! $? -eq 0 ] ; then
    else
       echo "done."
    fi
-then
+fi
 
 # 01. Create Rsync's Password file
 if [ ! -f $Auth_PasswordFile ] ; then
