@@ -54,3 +54,12 @@ function del_user_from_file
     fi
     del_user $(cat $str_file_name |xargs)
 }
+
+# Create user if not exists
+function create_user_if_not_exists()
+{
+   _id=$1
+   _passwd=$2
+   ! id $_id &>/dev/null && useradd $_id
+   echo $_passwd | passwd --stdin $_id
+}
