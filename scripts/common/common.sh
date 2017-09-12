@@ -23,3 +23,24 @@ function my_test
       echo "Test failed."
    fi
 }
+
+# 
+
+
+# The parameter parse as a Associate arrary.
+function parse_params()
+{
+   k="_DEFAULT"
+   declare -A _args
+   until [ $# -eq 0 ]
+   do
+      p=$1
+      if egrep -qo "^--" <<< $p; then
+         k=$(sed -nr 's#^--(.*)=.*#\1#gp' <<< $p)
+         _args[$k]=$(sed -nr 's#.*=(.*)#\1#gp' <<< $p)
+      fi
+      shift
+   done
+   return $_args
+}
+
