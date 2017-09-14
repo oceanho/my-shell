@@ -29,7 +29,7 @@ start()
       fi
    fi
 
-   c=`ps -ef | egrep "nginx: master" | grep -v "egrep" | wc -l`
+   c=`ps -ef | egrep "nginx: (master|worker)" | wc -l`
    if [ $c -eq 0 ] ; then
       echo "Starting nginx." && nginx && echo "done."
       return
@@ -55,7 +55,7 @@ set_ngx_to_PATH()
 # Stop nginx.
 stop()
 {
-   c=`ps -ef | egrep "nginx: master" | grep -v "egrep" | wc -l`
+   c=`ps -ef | egrep "nginx: (master|worker)" | wc -l`
    if [ $c -eq 0 ] ; then
       echo "Nginx not running. Nothing to do."
       return
@@ -95,7 +95,7 @@ restart()
 reload()
 {
    echo "Reload Nginx."
-   c=`ps -ef | egrep "nginx: master" | grep -v "egrep" | wc -l`
+   c=`ps -ef | egrep "nginx: (master|worker)" | wc -l`  
    if [ $c -eq 0 ] ; then
       echo "Nginx not running.Please execute [ $0 start ] to Start the nginx service first."
       return
