@@ -159,6 +159,8 @@ case "$1" in
    "start" )
       start
     ;;
+    "restart" )
+      restart ;;
     "stop" )
       stop
     ;;
