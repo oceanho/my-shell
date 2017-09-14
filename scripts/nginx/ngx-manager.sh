@@ -14,7 +14,7 @@ start()
    ngx=$(which nginx 2>/dev/null)
    ngx_pathed=1
    if [ -z $ngx ] ; then
-      ngx=`find / -type f -name "nginx"`
+      ngx=`find / -type f -name "nginx" | egrep -o ".*/sbin/nginx$"`
       ngx_pathed=0
    fi
    if [ -z "$ngx" ] ; then
@@ -61,7 +61,7 @@ stop()
    ngx=$(which nginx 2>/dev/null)
    ngx_pathed=1
    if [ -z $ngx ] ; then
-      ngx=`find / -type f -name "nginx"`
+      ngx=`find / -type f -name "nginx" | egrep -o ".*/sbin/nginx$"`
       ngx_pathed=0
    fi
    if [ -z "$ngx" ] ; then
@@ -173,5 +173,4 @@ case "$1" in
       help
     ;;
 esac
-
 exit 0
