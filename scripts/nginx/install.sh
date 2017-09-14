@@ -173,8 +173,6 @@ uninstall()
    echo "UnInstall. not implemention."
 }
 
-
-
 if [ $# -eq 0 ] ; then
    echo -e $_install_help
    exit 0
