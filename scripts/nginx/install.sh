@@ -82,7 +82,7 @@ install()
    NGX_DEPS=${_args["ngx-deps-dir"]}
    NGX_CONF_LIST=${_args["ngx-configures"]}
    NGX_INSTALL_DIR=${_args["ngx-install-dir"]}
-   
+    
    #
    # Set nginx's installed dir
    NGX_INSTALL_DIR="${APP_BASE_DIR}/nginx-${NGX_VERSION}"
@@ -101,7 +101,7 @@ install()
       yum install $NGX_DEPS -y
    fi
    if [ $? -ne 0 ] ; then
-      echo "It's seem to has problem."
+      echo "It's seem to has problem. yum install $NGX_DEPS failed."
       return
    fi
   
@@ -123,9 +123,17 @@ install()
       echo "Download ok."
    fi
 
-   # tar xf nginx.tar.gz & execute ./configure && make && make install
-   tar xf $nginx_tar && \
-   cd $(sed -nr "s#(.*).tar.gz#\1#gp" <<<$nginx_tar) && \
+   # Clean up the nginx.tar.gz decompress target dir
+   decompress_dir=$(sed -nr "s#(.*).tar.gz#\1#gp" <<<$nginx_tar)
+   [ -d $decompress_dir ] && /bin/rm -rf $decompress_dir
+
+   # Decompress the nginx.tar.gz
+   tar xf $nginx_tar || \
+   echo "Delete $nginx_tar ,Because of has problem." && /bin/rm -f $nginx_tar && return
+
+   
+   # Change into Nginx's Decompressed dir & ./configure && make && make install
+   cd $decompress_dir && \
    ./configure $NGX_CONF_LIST && make && make install
    if [ $? -ne 0 ] ; then
       echo "failed."
@@ -136,19 +144,23 @@ install()
    /bin/rm -f "${APP_BASE_DIR}/nginx" &>/dev/null
    ln -s $NGX_INSTALL_DIR ${APP_BASE_DIR}/nginx && \
 
-   # Configure the Nginx to env PATH
-   which nginx &>/dev/null || echo "export PATH=${APP_BASE_DIR}/nginx/sbin:\$PATH" >> /etc/profile
+   # Set the Nginx to env PATH
+   . /etc/source && which nginx &>/dev/null || \
+   echo "Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
+   echo "export PATH=${APP_BASE_DIR}/nginx/sbin:\$PATH" >> /etc/profile
 
    if [ $? -ne 0 ] ; then
       echo "failed."
       return
    fi
 
-   # Make configuration effect.
-   source /etc/profile
-   echo "-------------------------------------------------------------------------------"
+   # Let Nginx PATH effect.
+   . /etc/profile
+   echo "-----------------------------------"
+   echo "+     Nginx installation info     +"
+   echo "-----------------------------------"
    nginx -V
-   echo "-------------------------------------------------------------------------------"
+   echo "-------------------------------------------------------------------------------------------"
    echo "done."
 }
 
@@ -180,5 +192,4 @@ if [ "$action" == "install" ] ; then
    install $*
    exit 0
 fi
-
 
