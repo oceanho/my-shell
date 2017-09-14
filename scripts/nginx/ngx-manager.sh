@@ -7,6 +7,8 @@
 # Created by OceanHo(gzhehai@foxmail.com) AT 2017-09-13
 #
 
+. /etc/profile
+
 #
 # Start nginx.
 start()
@@ -127,7 +129,7 @@ info()
 {
    ngx=$(which nginx 2>/dev/null)
    if [ -z $ngx ] ; then
-      ngx=`find / -type f -name "nginx"`
+      ngx=`find / -type f -name "nginx" | egrep "*/sbin/nginx$"`
    fi
    if [ -z "$ngx" ] ; then
       echo "Not found nginx server."
