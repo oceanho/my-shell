@@ -108,7 +108,7 @@ reload()
 # Show nginx running status
 status()
 {
-   c=`ps -ef | egrep "nginx: master" | grep -v "egrep" | wc -l`
+   c=`ps -ef | egrep "nginx: (master|worker)" | wc -l`
    if [ $c -eq 0 ] ; then
       echo "Nginx not running."
       return
@@ -119,7 +119,7 @@ status()
    echo "------------------------------------"
    echo "+  Nginx running, processes info   +"
    echo "------------------------------------"
-   ps -ef | egrep "nginx" | grep -v "egrep"
+   ps -ef | egrep "nginx: (master|worker)"
    echo "------------------------------------------------------------------------------"
 }
 
