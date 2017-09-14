@@ -130,7 +130,7 @@ install()
    # Decompress the nginx.tar.gz
    tar xf $nginx_tar
    if [ $? -ne 0 ] ; then
-      echo "Delete $nginx_tar ,Because of has problem.";
+      echo "Delete $nginx_tar ,because of has problem.";
       /bin/rm -f $nginx_tar
       return
    fi
@@ -148,7 +148,7 @@ install()
    ln -s $NGX_INSTALL_DIR ${APP_BASE_DIR}/nginx && \
 
    # Set the Nginx to env PATH
-   . /etc/source && which nginx &>/dev/null || \
+   . /etc/profile && which nginx &>/dev/null || \
    echo "Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
    echo "export PATH=${APP_BASE_DIR}/nginx/sbin:\$PATH" >> /etc/profile
 
