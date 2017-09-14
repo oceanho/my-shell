@@ -45,7 +45,7 @@ set_ngx_to_PATH()
       echo "Error. invalid nginx's binary file."
       return 1
    fi
-   echo "Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
+   echo "# Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
    echo "export PATH=`dirname $1`:\$PATH" >> /etc/profile && \
    source /etc/profile
    return 0
