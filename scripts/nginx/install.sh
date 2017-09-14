@@ -79,7 +79,7 @@ install()
    #
    # Set the variable's new value
    # 
-   NGX_DEPS=${_args["ngx-deps-dir"]}
+   NGX_DEPS=${_args["ngx-deps"]}
    NGX_CONF_LIST=${_args["ngx-configures"]}
    NGX_INSTALL_DIR=${_args["ngx-install-dir"]}
     
