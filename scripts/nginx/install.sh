@@ -128,9 +128,12 @@ install()
    [ -d $decompress_dir ] && /bin/rm -rf $decompress_dir
 
    # Decompress the nginx.tar.gz
-   tar xf $nginx_tar || \
-   echo "Delete $nginx_tar ,Because of has problem." && /bin/rm -f $nginx_tar && return
-
+   tar xf $nginx_tar
+   if [ $? -ne 0 ] ; then
+      echo "Delete $nginx_tar ,Because of has problem.";
+      /bin/rm -f $nginx_tar
+      return
+   fi
    
    # Change into Nginx's Decompressed dir & ./configure && make && make install
    cd $decompress_dir && \
