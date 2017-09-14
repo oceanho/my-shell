@@ -149,7 +149,7 @@ install()
 
    # Set the Nginx to env PATH
    . /etc/profile && which nginx &>/dev/null || \
-   echo "Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
+   echo "# Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
    echo "export PATH=${APP_BASE_DIR}/nginx/sbin:\$PATH" >> /etc/profile
 
    if [ $? -ne 0 ] ; then
