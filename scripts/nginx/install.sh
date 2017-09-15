@@ -44,6 +44,10 @@ if [ $# -eq 1 ] ; then
 fi
 
 
+if [ ! -f ./common.sh ] ; then
+   wget -O ./common.sh http://git.oschina.net/hotbody/my-shell/raw/master/scripts/nginx/common.sh
+fi
+
 #
 # Import common functions
 . ./common.sh
