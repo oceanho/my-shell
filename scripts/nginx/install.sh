@@ -43,17 +43,40 @@ EOF
 # Install Nginx
 install()
 {
-   
+   #
+   # Set nginx's version
    NGX_VERSION="1.10.3"
-   NGX_WORKUSER="www"
-   NGX_WORKGROUP="www"
-   
-   # 
+
+   #
+   # Set nginx's worker process user & group
+   # Formater need. user:userid   group:groupid
+   NGX_WORKUSER="www:33333"
+   NGX_WORKGROUP="www:33333"
+
+   #
+   # Definde the Nginx's virtual user creation mode
+   # Can be used values: Default Recreate , The default value is Recreate
+   #
+   #-------------------------
+   # About Default & Recreate
+   #------------------------------------------------------------------------
+   # Default
+   #   Use default user as nginx's user if the specify user exists.
+   #   Create a new user as nginx's user if the specify user does not exists
+   #      
+   # Recreate
+   #   01. Delete user if the specify user exists.
+   #   02. Create a new user as Nginx's virtual user.
+   #------------------------------------------------------------------------
+   #
+   NGX_USER_CREATION_MODE="Recreate"
+
+   #
    # Set nginx's dependencies.(yum install to do)
    NGX_DEPS="pcre-devel openssl-devel"
 
    #
-   # Local's var
+   # Local's variables
    nginx_tar="nginx-${NGX_VERSION}.tar.gz"
    nginx_down_url="http://nginx.org/download/$nginx_tar"
 
@@ -64,6 +87,9 @@ install()
    _args["ngx-deps"]=$NGX_DEPS
    _args["ngx-configures"]=$NGX_CONF_LIST
    _args["ngx-install-dir"]=$NGX_INSTALL_DIR
+   _args["ngx-worker-user"]=$NGX_WORKUSER
+   _args["ngx-worker-group"]=$NGX_WORKGROUP
+   _args["ngx-user-creation-mode"]=$NGX_WORKGROUP
 
    # Process all paramters
    until [ $# -eq 0 ]
@@ -79,8 +105,20 @@ install()
    #
    # Set the variable's new value
    # 
+   NGX_WORKUSER=${_args["ngx-worker-user"]}
+   NGX_WORKGROUP=${_args["ngx-worker-group"]}
+   NGX_WORKUSER=${_args["ngx-worker-user"]}
+
+   #
+   # The nginx's dependencies installed by yum install
    NGX_DEPS=${_args["ngx-deps"]}
+
+   #
+   # The nginx's ./configure parameters
    NGX_CONF_LIST=${_args["ngx-configures"]}
+
+   #
+   # The nginx's installtion directory
    NGX_INSTALL_DIR=${_args["ngx-install-dir"]}
     
    #
@@ -88,7 +126,7 @@ install()
    NGX_INSTALL_DIR="${APP_BASE_DIR}/nginx-${NGX_VERSION}"
 
    #
-   # The nginx's ./configure Parameters
+   # The nginx's ./configure parameters
    #
    NGX_CONF_LIST="--prefix=${NGX_INSTALL_DIR} \
    --user=${NGX_WORKUSER} --group=${NGX_WORKGROUP} \
@@ -109,7 +147,7 @@ install()
    mkdir -p ${MY_TOOLS_DIR} && cd ${MY_TOOLS_DIR}
 
    # Created User & Group of Nginx's Worker runAs user
-   [ ! id $NGX_WORKUSER &>/dev/null ] && useradd -s /sbin/nologin -M $NGX_WORKUSER
+   ! id $NGX_WORKUSER &>/dev/null && useradd -s /sbin/nologin -M $NGX_WORKUSER
 
    # Download nginx tar.gz file
    cd ${MY_TOOLS_DIR}
@@ -149,15 +187,16 @@ install()
 
    # Set the Nginx to env PATH
    . /etc/profile && which nginx &>/dev/null || \
-   echo "# Configure the Nginx PATH by OceanHo-Nginx-tools" >> /etc/profile && \
-   echo "export PATH=${APP_BASE_DIR}/nginx/sbin:\$PATH" >> /etc/profile
+   echo -e "\n
+# Configure the Nginx PATH by OceanHo-Nginx-tools \n
+export PATH=${APP_BASE_DIR}/nginx/sbin:\$PATH" >> /etc/profile
 
    if [ $? -ne 0 ] ; then
       echo "failed."
       return
    fi
 
-   # Let Nginx PATH effect.
+   # Reload the /etc/profile & Let Nginx PATH effect.
    . /etc/profile
    echo "-----------------------------------"
    echo "+     Nginx installation info     +"
@@ -173,6 +212,81 @@ uninstall()
    echo "UnInstall. not implemention."
 }
 
+
+#
+# Common functions
+# Check user has exists by ID or Name
+#------------------------------------
+#
+# The first param is UID if want checked by id.
+# The second param is Name if want checked by name.
+# Notice: If only want checked by Name, the first param set as ""
+#----------------------------------------------------------------
+#
+# Return 0 if the user has not exists
+# Return 1 if the user has exists.
+#
+#----------------------------------------------------------------
+function user_exists()
+{
+    id=$1
+    name=$2
+    if [ ! -z "$id" ] ; then
+      p=`awk -F":" -vid=$id '$3==id{print 1}' /etc/passwd`
+      if [ "$p" == "1" ] ; then
+         return 0 
+      fi
+    fi
+    if [ ! -z "$name" ] ; then   
+      p=`awk -F":" -vname=$name '$1==name{print 1}' /etc/passwd`
+      if [ "$p" == "1" ] ; then
+         return 0 
+      fi
+    fi
+    return 1
+}
+
+
+#
+# Common functions
+# Check group has exists by ID or Name
+#------------------------------------
+#
+# The first param is UID if want checked by id.
+# The second param is Name if want checked by name.
+# Notice: If only want checked by Name, the first param set as ""
+#----------------------------------------------------------------
+#
+# Return 0 if the group has not exists
+# Return 1 if the group has exists.
+#
+#----------------------------------------------------------------
+function group_exists()
+{
+    id=$1
+    name=$2
+    if [ ! -z "$id" ] ; then
+      p=`awk -F":" -vid=$id '$3==id{print 1}' /etc/group`
+      if [ "$p" == "1" ] ; then
+         return 0 
+      fi
+    fi
+    if [ ! -z "$name" ] ; then   
+      p=`awk -F":" -vname=$name '$1==name{print 1}' /etc/group`
+      if [ "$p" == "1" ] ; then
+         return 0 
+      fi
+    fi
+    return 1
+}
+
+#
+#
+#
+#
+
+#
+# Select command's & execute .
 if [ $# -eq 0 ] ; then
    echo -e $_install_help
    exit 0
@@ -193,4 +307,3 @@ if [ "$action" == "install" ] ; then
    install $*
    exit 0
 fi
-
