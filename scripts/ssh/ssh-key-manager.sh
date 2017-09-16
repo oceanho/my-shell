@@ -24,27 +24,27 @@ Create-SSH_Key()
    verbose="0"
    key_id=""
    key_type=rsa
-   key_szie=2048
+   key_size=2048
    key_password=""
    key_comment="$USER@`hostname`"
    _help_text=`cat <<EOF
-Usage Create-SSH_Key -f -v
---key-id=~/.ssh/my_conn_all_id_rsa
---key-type=rsa
---key-size=2048
---key-password=123456
+Usage: Create-SSH_Key -f -v \ \n
+--key-id=~/.ssh/my_conn_all_id_rsa \ \n
+--key-type=rsa \ \n
+--key-size=2048 \ \n
+--key-password=123456 \ \n
 --key-comment="my test key pair."
 EOF`
    # Check has parameter & request is show help.
    if [ $# -eq 0 ] ; then
-      echo $_help_text
+      echo -e $_help_text
       return
    fi
 
    # Show help
    case "$1" in
       "help" | "h" | "--help" | "-h" | "-help" | "?" | "-?" )
-         echo $_help_text
+         echo -e $_help_text
          return
       ;;
    esac
@@ -79,6 +79,9 @@ EOF`
          "key-comment" )
             key_comment=$v
          ;;
+         "force" )
+            force=1
+         ;;
          * )
             if [ $1 != "-v" ] ; then
                echo "Warning. Unsupoort paramters: $1 "
@@ -89,20 +92,15 @@ EOF`
    done
    
    # Check the key-id parameter required.
-   if [ -z $key_id ] ; then
+   if [ -z "$key_id" ] ; then
       echo "Missing parameter,key-id. Your can use --key-id= options to specify."
       return
    fi
    
-   key_id=$(sed -nr "s#^~(.*)#$HOME\1#gp" <<<$key_id)
-
-   if [ ${key_id[0]} != "/" ] ; then
-      echo "key-id:[ $key_id ] is not are absolute path."
-      return
-   fi
+   key_id=$(echo "echo $key_id" | /bin/bash)
    
    # Move the keys If exists & Generate with force.
-   if [ -f $key_id -a $force -eq 0 ] ; then
+   if [ -f $key_id -a $force -eq 1 ] ; then
       bakid=".bak-$(date +%F_%s)"
       /bin/mv ${key_id}{,$bakid}
       /bin/mv ${key_id}.pub{,$bakid}
@@ -115,7 +113,7 @@ EOF`
    fi
 
    # Concat ssh-keygen Command Script text.
-   cmd="ssh-keygen -t $key_type -b $key_size -f $key_id -N \"$key_password\" -C $key_comment"
+   cmd="ssh-keygen -t $key_type -b $key_size -f $key_id -N \"$key_password\" -C \"$key_comment\""
  
    # Set -q options to cmd if not need show verbose info.
    if [ $verbose == "0" ] ; then
@@ -123,11 +121,55 @@ EOF`
    fi
 
    echo "Excute command:[ $cmd ]."
-   if echo $cmd | bash ; then
+   if echo $cmd | /bin/bash ; then
       echo "done."
       return
    fi
    echo "failed."
+}
+
+
+# Dispatch-SSH key to service nodes
+Distrib-SSH_Key()
+{
+   pub="~/.ssh/id_rsa.pub"
+   #hosts="172.16.1.{1..10}"
+   hosts="172.16.1.{1..10}"
+   mutual_trust="no"          # Machines mutual trust ?
+   until [ $# -eq 0 ]
+   do
+      if egrep -q "^--.*=.*" <<<"$1" ; then
+         key=`sed -nr 's#^--(.*)=.*#\1#gp' <<<"$1"`
+         value=`sed -nr 's#^--.*=(.*)#\1#gp' <<<"$1"`
+         case "$key" in
+            "pub" )
+               pub="$value"
+            ;;
+            "hosts" )
+               hosts="$value"
+            ;;
+            "mutual-trust" )
+               mutual_trust="yes"
+            ;;
+         esac
+      fi
+      shift
+   done
+   pub=$(echo "echo $pub" | /bin/bash)
+   if [ ! -f "$pub" ] ; then
+      echo "Not found. [ $pub ].please ensure Or generate ssh's key with Create-SSH_Key --key-id=~/.ssh/id_rsa"
+      return 1
+   fi
+
+   if [ -z "$hosts" ] ; then
+      echo "invalid hosts."
+      return 1
+   fi
+   
+   for ip in `echo "echo $hosts"| /bin/bash`
+   do
+      echo "ip:" $ip
+   done
 }
 
 # Register a SSH's private key to /etc/ssh/ssh_config

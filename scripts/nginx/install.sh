@@ -300,9 +300,10 @@ fi
 
 #
 # Replace --user & --group from NGX_CONF_LIST
-NGX_CONF_LIST=$(sed -nr -e "s#(--user=.* )##g" \
-               -e "s#(--group=.* )##g" \
-               -e "s#(--prefx=.* )##g" <<<$NGX_CONF_LIST)
+if egrep -q "\-\-(user|group|prefix)=\S+" <<<$NGX_CONF_LIST ; then
+   NGX_CONF_LIST=$(sed -nr "s#--(user|group|prefix)=\S+##gp" <<<$NGX_CONF_LIST)
+fi
+
 #
 # Fix nginx's --user & --group & --prefix
 NGX_CONF_LIST="$NGX_CONF_LIST --user=$ngx_user_name --group=$ngx_group_name --prefix=$NGX_INSTALL_DIR"
