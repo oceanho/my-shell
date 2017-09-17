@@ -100,6 +100,11 @@ NGX_USER_CREATE_MODE="Recreate"
 NGX_DEPS="pcre-devel openssl-devel"
 
 #
+# The nginx's ./configure parameters
+#
+NGX_CONF_LIST="--with-http_stub_status_module --with-http_ssl_module"
+
+#
 # Local's variables
 ngx_tar="nginx-${NGX_VERSION}.tar.gz"
 
@@ -130,8 +135,8 @@ _args["post-script"]="echo done."
 until [ $# -eq 0 ]
 do
    if egrep "^--.*=.*" <<< "$1" ; then
-      k=$(sed -nr 's#--(.*)=.*#\1#gp' <<<$1)
-      v=$(sed -nr 's#--.*=(.*)#\1#gp' <<<$1)
+      k=$(sed -nr 's#--([a-z-]+)=.*#\1#gp' <<<$1)
+      v=$(sed -nr 's#--[a-z-]+=(.*)#\1#gp' <<<$1)
       _args[$k]=$v
    fi
    shift
@@ -169,10 +174,6 @@ NGX_BASE_DIR=${_args["ngx-base-dir"]}
 # Set nginx's installed dir
 NGX_INSTALL_DIR="${NGX_BASE_DIR}/nginx-${NGX_VERSION}"
 
-#
-# The nginx's ./configure parameters
-#
-NGX_CONF_LIST="--with-http_stub_status_module --with-http_ssl_module"
 
 #
 # Nginx Install completed execute scripts
