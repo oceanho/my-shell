@@ -44,7 +44,10 @@ if [ $# -eq 1 ] ; then
 fi
 
 dir=`dirname $0`
-[ ! -d "$dir" ] || echo "invalid path. [$dir]." && exit 1
+if [ ! -d "$dir" ] ; then
+   echo "invalid path. [$dir]."
+   exit 1
+fi
 
 cd $dir
 if [ ! -f ./common.sh ] ; then
