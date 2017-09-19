@@ -38,14 +38,14 @@ EOF`
    # Check has parameter & request is show help.
    if [ $# -eq 0 ] ; then
       echo -e $_help_text
-      return
+      return 1
    fi
 
    # Show help
    case "$1" in
       "help" | "h" | "--help" | "-h" | "-help" | "?" | "-?" )
          echo -e $_help_text
-         return
+         return 1
       ;;
    esac
 
@@ -94,7 +94,7 @@ EOF`
    # Check the key-id parameter required.
    if [ -z "$key_id" ] ; then
       echo "Missing parameter,key-id. Your can use --key-id= options to specify."
-      return
+      return 1
    fi
    
    key_id=$(echo "echo $key_id" | /bin/bash)
@@ -109,7 +109,7 @@ EOF`
    # Check the key pair are exists.
    if [ -f $key_id ] ; then
       echo "Key ID has exists. Your can use -f or remove file $key_id and try again."
-      return
+      return 1
    fi
 
    # Concat ssh-keygen Command Script text.
@@ -117,15 +117,15 @@ EOF`
  
    # Set -q options to cmd if not need show verbose info.
    if [ $verbose == "0" ] ; then
-      cmd=$cmd -q 
+      cmd="$cmd -q"
    fi
 
    echo "Excute command:[ $cmd ]."
    if echo $cmd | /bin/bash ; then
-      echo "done."
-      return
+      Registe-SSH_Key "$key_id" &&  echo "done."
+   else
+      echo "failed."
    fi
-   echo "failed."
 }
 
 
@@ -385,21 +385,22 @@ Registe-Mutual-Trust()
 clear
 cat <<EOF
 \n
-Todo:
-\n
-Register remote host Mutual-Trust.
-\n\n
+Todo: \n
+------------\n
+Register remote host Mutual-Trust. \n
+----------------------------------\n\n
 
-Usage:
-\n
+Usage:\n
+--------------------\n
 Registe-Mutual-Trust \n
 "KEYID file" \ \n 
 "SSH's LOGIN" \ \n
 "SSH's OPTIONS." \ \n
-"TRUST HOSTS PUB KEY file" \n\n
+"TRUST HOSTS PUB KEY file" \n
+----------------------------------------
+\n\n
 
-Example:
-\n
+Example:\n
 Registe-Mutual-Trust "/root/.ssh/my_id_rsa" "root" "root@172.16.1.100 -p 22" "/tmp/my-trust_hosts"
 \n
 EOF`
@@ -477,29 +478,39 @@ EOF`
 }
 
 
+#
 # Register a SSH's private key to /etc/ssh/ssh_config
-Register-SSH_Key()
+Registe-SSH_Key()
 {
 
-echo "Register ssh's identity file to /etc/ssh/ssh_config."
-echo -e `
+if [ $# -eq 0 ]
+then
+      echo -e `
 clear
 cat <<EOF
 \n
+Todo: \n
+Registe SSH identity file to /etc/ssh/ssh_config \n\n
+
 Usage: \n
---------------------------------- \n
-Distrib-SSH_Key \ \n
---keyid="~/.ssh/id_rsa.pub" \ \n
---hosts="172.16.1.{1..100}" \ \n
---mutual-trust=yes \ \n
---ssh-user=admin \ \n
---ssh-port=22222 \ \n
---ssh-passwd=ocean123 \ \n
+--------------- \n
+Registe-SSH_Key "SSH's identity file path." \n
 ---------------------------------------------------- \n
 EOF
-`
+\n`
+   return 1
+fi
 
-   keyid="~/.ssh/id_rsa.pub"
+   keyid="$1"
+   if ! egrep -q "$keyid" /etc/ssh/ssh_config
+   then
+   echo "
+# Create by OceanHo tools
+Host *
+   IdentityFile = $keyid
+" >>/etc/ssh/ssh_config
+   fi
+   return 0
 }
 
 # UnRegister a SSH's private key from /etc/ssh/ssh_config
