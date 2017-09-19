@@ -305,7 +305,7 @@ fi
    # Distribute SSH's key to remote hosts
    for ip in `echo "echo $hosts"| /bin/bash`
    do
-      echo -e "\033[33m Send ssh's key to $ip \033[0m"
+      echo -e "\033[33m Send SSH's public key to $ip \033[0m"
       sshpass -p"$ssh_passwd" ssh-copy-id -i "$keyid" \
       "$ssh_user@$ip -p $ssh_port -oStrictHostKeyChecking=no" \
       > /tmp/ssh_copy_id.msg 2>&1
@@ -326,7 +326,7 @@ fi
    #
    # SSH's identity file name
    _keyid=$keyid
-   if egrep "*.pub$" <<<$keyid
+   if egrep -q "*.pub$" <<<$keyid
    then
       _keyid=`sed -nr 's#(.*).pub#\1#gp' <<<"$keyid"`
    fi
@@ -339,43 +339,142 @@ fi
       remote_home_dir="/home/$ssh_user"
    fi
 
-
+   #
+   # Choose & Execute Mutual-trust do
    case "$mutual_trust" in
       "Y" | "y" | "yes" | "Yes" )
          #
          # Scaning remote server SSH's public key
-         echo " Scaning all host SSH's Public key"
+         echo -e "\n"
+         echo -e " Scaning public key"
          for ip in ${suss_ips[@]}
          do
+            printf " Scaning $ip"
             ssh-keyscan $ip >>$f 2>/dev/null
+            printf "\t[\033[32m done.\033[0m ]\n"
          done
-         echo -e " Scan done. Total hosts: `wc -l $f`"
-         
+         echo -e " Scan completed. total hosts: `wc -l $f | awk '{print $1}'`"
+         echo -e "\n"
          #
          # Copy the SSH's key & public key to remote hosts
          for ip in ${suss_ips[@]}
          do
-            echo -e "\033[33m adding $ip mutual-trust. \033[0m"
-            scp -qrp -P $ssh_port $_keyid{,pub} \
-               $ssh_user@$ip:"$remote_home_dir/.ssh/" >/dev/null && \
-            cat $f | ssh -p $ssh_port $ssh_user@$ip \
-            "exec sh -c 'cd; umask 077; test -d .ssh || mkdir .ssh ; \
-             cat >> .ssh/known_hosts && (test -x /sbin/restorecon && \
-             /sbin/restorecon .ssh .ssh/known_hosts >/dev/null 2>&1 || true)'" >/dev/null
-            if [ $? -eq 0 ]
-            then
-               echo -e " $ip [ \033[32m Trusted OK \033[0m ]"
-            else
-               echo -e " $ip [ \033[31m Trusted failed \033[0m ]"
-            fi
+            echo -e "\033[33m Adding $ip mutual-trust. \033[0m"
+            
+            #
+            # Registe remote host Mutual-Trust
+            Registe-Mutual-Trust "$_keyid" \
+               "$ssh_user" "$ssh_user@$ip -p $ssh_port" "$f"       
          done
          #
-         # Clear
-         #/bin/rm -f $f
+         # Clear the tempnoary file ( Remote hosts SSH's public key )
+         /bin/rm -f $f
       ;;
    esac
 }
 
+
+#
+# Mutual-Trust
+Registe-Mutual-Trust()
+{
+
+   if [ $# -eq 0 ]
+   then
+   echo -e `
+clear
+cat <<EOF
+\n
+Todo:
+\n
+Register remote host Mutual-Trust.
+\n\n
+
+Usage:
+\n
+Registe-Mutual-Trust \n
+"KEYID file" \ \n 
+"SSH's LOGIN" \ \n
+"SSH's OPTIONS." \ \n
+"TRUST HOSTS PUB KEY file" \n\n
+
+Example:
+\n
+Registe-Mutual-Trust "/root/.ssh/my_id_rsa" "root" "root@172.16.1.100 -p 22" "/tmp/my-trust_hosts"
+\n
+EOF`
+   return 1
+   fi
+
+   keyid="$1"
+   ssh_user="$2"
+   ssh_opts="$3"
+   trust_hosts_ssh_pub_file="$4" 
+   
+   #
+   # Basic Checking
+   if [ ! -f "$keyid" ]
+   then
+      echo -e "\033[31m keyid file not found.\033[0m [$keyid]"
+      return 1
+   fi
+
+   if [ -z "$ssh_user" ]
+   then
+      echo -e "\033[31m missing SSH's user.\033[0m"
+      return 1
+   fi
+
+   if [ -z "$ssh_opts" ]
+   then
+      echo -e "\033[31m missing SSH's options.\033[0m"
+      return 1
+   fi
+   
+   if [ -z "$trust_hosts_ssh_pub_file" ]
+   then
+      echo -e "\033[31m missing SSH's trust host list.\033[0m"
+      return 1
+   fi
+   
+   #
+   # Mutual-trust among machines
+   f="$trust_hosts_ssh_pub_file"
+
+   #
+   # SSH's identity file name
+   _keyid=$keyid
+   if egrep -q "*.pub$" <<<$keyid
+   then
+      _keyid=`sed -nr 's#(.*).pub#\1#gp' <<<"$keyid"`
+   fi
+
+   #
+   # remote host's user HOME dir
+   remote_home_dir="/root"
+   if [ "$ssh_user" != "root" ]
+   then
+      remote_home_dir="/home/$ssh_user"
+   fi
+
+   # 
+   # Copy the SSH's identity & public to Remote host
+   scp -qrp -P $ssh_port $_keyid{,pub} \
+      $ssh_user@$ip:"$remote_home_dir/.ssh/" >/dev/null && \
+   
+   #
+   # Copy the trust hosts to remote Server
+   cat $f | ssh $ssh_opts \
+   "exec sh -c 'cd; umask 077; test -d .ssh || mkdir .ssh ; \
+    cat >> .ssh/known_hosts && (test -x /sbin/restorecon && \
+    /sbin/restorecon .ssh .ssh/known_hosts >/dev/null 2>&1 || true)'" >/dev/null
+   if [ $? -eq 0 ]
+   then
+      echo -e " $ip [ \033[32m Registe Trusted OK \033[0m ]"
+   else
+      echo -e " $ip [ \033[31m Registe Trusted failed \033[0m ]"
+   fi
+}
 
 
 # Register a SSH's private key to /etc/ssh/ssh_config
@@ -406,11 +505,11 @@ EOF
 # UnRegister a SSH's private key from /etc/ssh/ssh_config
 UnRegister-SSH_Key()
 {
-   echo "UnRegister ssh's key ."
+   echo -e "UnRegister ssh's key ."
 }
 
 # Check & Install SSH's password Plugin sshpass
 Install-Soft_WhenUninstalled()
 {
-   echo "Install-Soft-WhenUnInstalled ."
+   echo -e "Install-Soft-WhenUnInstalled ."
 }
