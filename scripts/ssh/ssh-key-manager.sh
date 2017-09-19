@@ -154,9 +154,10 @@ Distrib-SSH_Key \ \n
 --ssh-passwd=ocean123 \ \n
 --from-file=/tmp/disb-web.conf \n\n
 
-Remark for option --from-file \n
+The option --from-file \n
 Your can use the --from-file option to specify \n
 the configuration file of Distrubte-SSH_Key needle. \n\n
+
 Example of the file \n
 # This is a comment.\n
 #keyid = ~/.ssh/conn_web_id_rsa \n\n
@@ -165,7 +166,10 @@ hosts = 172.16.1.{1..100} \n
 mutual-trust = yes\n
 ssh-user = admin\n
 ssh-port = 12555 \n
-ssh-passwd = ocean123 \n \n
+ssh-passwd = ocean123 \n\n
+
+Info:\n
+The --ssh-passwd also can be used --ssh-password \n\n
 
 \033[33m \n
 Warning !! \n
@@ -248,8 +252,8 @@ fi
             "ssh-port" )
                ssh_port="$value"
             ;;
-            "ssh_passwd" )
-               ssh_trust="$value"
+            "ssh-passwd" | "ssh-password" )
+               ssh_passwd="$value"
             ;;
          esac
       fi
