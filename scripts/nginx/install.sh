@@ -8,6 +8,10 @@ declare -a _install_help=`
 clear
 cat<<EOF
 \n
+Todo:\n
+Nginx installation tools\n
+------------------------\n\n
+
 Usage:($0 install/help/h/--help/-h/-?/?)\n
 ----------------------------\n
  If your want install nginx,please run fllowing scripts.\n
@@ -45,7 +49,7 @@ fi
 
 dir=`dirname $0`
 if [ ! -d "$dir" ] ; then
-   echo "invalid path. [$dir]."
+   echo "invalid path,please use [sh AbsolutePath] to run script."
    exit 1
 fi
 

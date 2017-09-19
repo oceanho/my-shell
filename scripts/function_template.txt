@@ -1,0 +1,30 @@
+function myfunc()
+{
+   if [ $# -eq 0 ]
+   then
+   echo -e `
+clear
+cat <<EOF
+\n
+Todo: \n
+------------\n
+Register remote host Mutual-Trust. \n
+----------------------------------\n\n
+
+Usage:\n
+--------------------\n
+Registe-Mutual-Trust \n
+"KEYID file" \ \n 
+"SSH's LOGIN" \ \n
+"SSH's OPTIONS." \ \n
+"TRUST HOSTS PUB KEY file" \n
+---------------------------------------- \n\n
+
+Example:\n
+Registe-Mutual-Trust "/root/.ssh/my_id_rsa" "root" "root@172.16.1.100 -p 22" "/tmp/my-
+trust_hosts"
+\n
+EOF`
+   return 1
+   fi
+}
