@@ -12,6 +12,14 @@ Process_ConfigureMode="force"
 Rsync_Server_UID="rsync"
 Rsync_Server_GID="rsync"
 
+
+dir=`dirname $0`
+if [ ! -d "$dir" ] ; then
+   echo "invalid path,please use [sh AbsolutePath] to run script."
+   exit 1
+fi
+cd $dir
+
 # Basic check
 if [ ! -f "./rsync.password" ] ; then
    echo "missing file rsync.password in `pwd`"
