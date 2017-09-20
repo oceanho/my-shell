@@ -56,7 +56,8 @@ fi
 
 cd $dir
 if [ ! -f ./common.sh ] ; then
-   wget -O ./common.sh http://git.oschina.net/hotbody/my-shell/raw/master/scripts/nginx/common.sh
+   wget -O ./common.sh \
+   https://raw.githubusercontent.com/oceanho/my-shell/master/scripts/nginx/common.sh
 fi
 
 #
