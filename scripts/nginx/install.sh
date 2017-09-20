@@ -25,6 +25,7 @@ Usage:($0 install/help/h/--help/-h/-?/?)\n
  --ngx-confs="--with-http_ssl_module --with-http_stub_status_module" \ \n
  --ngx-tar-get-url="http://nginx.org/download/1.10.3.tar.gz" \ \n
  --ngx-tar-md5-sign="20cb4f0b0c9db746c630d89ff4ea" \ \n
+ --ngx-skiped-when-installed="yes" \ \n
  --before-script="echo Starting" \ \n
  --post-script="echo done." \n
 ---------------------------------------------------------------------------\n
@@ -100,6 +101,12 @@ NGX_GROUP="www:33333"
 NGX_USER_CREATE_MODE="Recreate"
 
 #
+# Nginx's will be stop installation
+# When NGINX has installed.
+#
+NGX_SKIPED_WHEN_INSTALLED="yes"
+
+#
 # Set nginx's dependencies.(yum install to do)
 NGX_DEPS="pcre-devel openssl-devel"
 
@@ -132,6 +139,8 @@ _args["ngx-user-create-mode"]=$NGX_USER_CREATE_MODE
 _args["ngx-tar-get-url"]=$NGX_TAR_GET_URL
 _args["ngx-tar-md5-sign"]=$NGX_TAR_MD5_SIGN
 
+_args["ngx-skiped-when-installed"]=$NGX_SKIPED_WHEN_INSTALLED
+
 _args["before-script"]="echo starting."
 _args["post-script"]="echo done."
 
@@ -145,6 +154,23 @@ do
    fi
    shift
 done
+
+
+#
+# Check need stop install if the nginx has installed
+#
+_s=${_args["ngx-skiped-when-installed"]}
+if [ "$s" == "yes" ]
+then
+   source /etc/profile
+   which nginx >/dev/null 2>&1
+   if [ $? -eq 0 ]
+   then
+      echo "Skiped install. because of the nginx has installed."
+      exit 0
+   fi
+fi
+
 
 #
 # Set the variable's new value
