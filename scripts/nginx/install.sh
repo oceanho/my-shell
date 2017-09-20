@@ -160,7 +160,7 @@ done
 # Check need stop install if the nginx has installed
 #
 _s=${_args["ngx-skiped-when-installed"]}
-if [ "$s" == "yes" ]
+if [ "$_s" == "yes" ]
 then
    source /etc/profile
    which nginx >/dev/null 2>&1
