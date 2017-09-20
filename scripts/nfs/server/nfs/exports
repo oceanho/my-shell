@@ -1,0 +1,3 @@
+/data/www      172.16.1.0/24(rw,sync)
+/data/bbs      172.16.1.0/24(rw,sync)
+/data/blog     172.16.1.0/24(rw,sync)
