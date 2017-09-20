@@ -6,7 +6,7 @@
 #
 
 action="$1"
-RSYNCD_PID_FILE="/var/run/rsyncd.pid"
+RSYNCD_PID_FILE="/var/run/rsync.pid"
 # show help
 help()
 {
