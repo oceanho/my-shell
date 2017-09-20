@@ -344,6 +344,11 @@ fi
    fi
 
    #
+   # Register the SSH's key to /etc/ssh/ssh_config
+   #
+   Registe-SSH_Key "$keyid"
+
+   #
    # Choose & Execute Mutual-trust do
    case "$mutual_trust" in
       "Y" | "y" | "yes" | "Yes" )
