@@ -16,14 +16,9 @@ Usage:($0 install/help/h/--help/-h/-?/?)\n
  If your want install php,please run fllowing scripts.\n
 -------------------------------------------------------------\n
  $0 install \ \n
- --php-ver=1.10.3 \ \n
- --php-deps="pcre-devel openssl-devel" \ \n
  --php-user=www:33333 \ \n
  --php-group=www:33333 \ \n
  --php-user-create-mode=Recreate \ \n
- --php-confs="--with-http_ssl_module --with-http_stub_status_module" \ \n
- --php-tar-get-url="http://nginx.org/download/1.10.3.tar.gz" \ \n
- --php-tar-md5-sign="20cb4f0b0c9db746c630d89ff4ea" \ \n
  --before-script="echo Starting" \ \n
  --post-script="echo done." \n
 ---------------------------------------------------------------------------
@@ -31,25 +26,111 @@ Usage:($0 install/help/h/--help/-h/-?/?)\n
 EOF
 `
 
-#
-# Select command's & execute .
-if [ $# -eq 0 ] ; then
-   echo -e $_install_help
+if [ -f "/application/php/sbin/php-fpm" ]
+then
+   echo "PHP installed. nothing to do."
    exit 0
 fi
 
-if [ $# -eq 1 ] ; then
-   case  "$1" in
-      "help" | "h" | "--help" | "-h" | "-help" | "?" | "-?" )
-         echo -e $_install_help;
-         exit 0
-      ;;
-   esac
-fi
+#
+# Select command's & execute .
+#  if [ $# -eq 0 ] ; then
+#     echo -e $_install_help
+#     exit 0
+#  fi
+#  
+#  if [ $# -eq 1 ] ; then
+#     case  "$1" in
+#        "help" | "h" | "--help" | "-h" | "-help" | "?" | "-?" )
+#           echo -e $_install_help;
+#           exit 0
+#        ;;
+#     esac
+#  fi
+#  
+#  dir=`dirname $0`
+#  if [ ! -d "$dir" ] ; then
+#     echo "invalid path,please use [sh AbsolutePath] to run script."
+#     exit 1
+#  fi
 
-dir=`dirname $0`
-if [ ! -d "$dir" ] ; then
-   echo "invalid path,please use [sh AbsolutePath] to run script."
+cd /server/tools && \
+
+yum install \
+zlib-devel \
+libxml2-devel \
+libjpeg-devel \
+libjpeg-turbo-devel \
+freetype-devel \
+libpng-devel \
+gd-devel \
+libcurl-devel \
+libxslt-devel \
+libxslt-devel -y && \
+
+tar -xf ./libiconv-1.14.tar.gz && \
+cd libiconv-1.14 && ./configure --prefix=/usr/local/libiconv && \
+make && make install && \
+
+cd /server/tools/ && \
+
+wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo && \
+
+yum -y install libmcrypt-devel mhash mcrypt && \
+
+tar -xf ./php-5.5.32.tar.gz && \
+
+cd ./php-5.5.32 && \
+
+./configure \
+--prefix=/application/php-5.5.32 \
+--with-mysql=mysqlnd \
+--with-pdo-mysql=mysqlnd \
+--with-iconv-dir=/usr/local/libiconv \
+--with-freetype-dir \
+--with-jpeg-dir \
+--with-png-dir \
+--with-zlib \
+--with-libxml-dir=/usr \
+--enable-xml \
+--disable-rpath \
+--enable-bcmath \
+--enable-shmop \
+--enable-sysvsem \
+--enable-inline-optimization \
+--with-curl \
+--enable-mbregex \
+--enable-fpm \
+--enable-mbstring \
+--with-mcrypt \
+--with-gd \
+--enable-gd-native-ttf \
+--with-openssl \
+--with-mhash \
+--enable-pcntl \
+--enable-sockets \
+--with-xmlrpc \
+--enable-soap \
+--enable-short-tags \
+--enable-static \
+--with-xsl \
+--with-fpm-user=www \
+--with-fpm-group=www \
+--enable-ftp \
+--enable-opcache=no && \
+
+make && make install
+
+if [ $? -ne 0 ]
+then
+   echo -e "\033[31m Install PHP failed.\033[0m"
    exit 1
 fi
+
+/bin/rm -f /application/php &>/dev/null
+ln -s /application/php-5.5.32 /application/php
+
+echo -e "\033[32m Done. \033[0m"
+exit 0
+
 
