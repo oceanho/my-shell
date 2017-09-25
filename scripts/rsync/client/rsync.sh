@@ -58,4 +58,4 @@ fi
 export RSYNC_PASSWORD=$Rsync_Password
 
 # Execute rsync process
-rsync -az --bwlimit $Rsync_BWlimit --delete $Rsync_Dir $Rsync_SvrInfo
+rsync -az --bwlimit $Rsync_BWlimit $4 $Rsync_Dir $Rsync_SvrInfo
