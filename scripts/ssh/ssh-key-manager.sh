@@ -4,20 +4,13 @@
 # Created by OceanHo(gzhehai@foxmail.com) at 2017-09-11
 #
 
-_MENU_TEXT="
-`cat <<EOF
-1.
-2.
-3.
-4.
-EOF`"
 
 # Create SSH's Key pair
-Create-SSH_Key()
+Create_SSH_Key()
 {
    #
    # Usage
-   #  Create-SSH_Key -f --key-id=~/.ssh/my_conn_all_id_rsa
+   #  Create_SSH_Key -f --key-id=~/.ssh/my_conn_all_id_rsa
    #
  
    force=0
@@ -28,7 +21,7 @@ Create-SSH_Key()
    key_password=""
    key_comment="$USER@`hostname`"
    _help_text=`cat <<EOF
-Usage: Create-SSH_Key -f -v \ \n
+Usage: Create_SSH_Key -f -v \ \n
 --key-id=~/.ssh/my_conn_all_id_rsa \ \n
 --key-type=rsa \ \n
 --key-size=2048 \ \n
@@ -122,15 +115,15 @@ EOF`
 
    echo "Excute command:[ $cmd ]."
    if echo $cmd | /bin/bash ; then
-      Registe-SSH_Key "$key_id" &&  echo "done."
+      Registe_SSH_Key "$key_id" &&  echo "done."
    else
       echo "failed."
    fi
 }
 
 
-# Dispatch-SSH key to service nodes
-Distrib-SSH_Key()
+# Dispatch_SSH key to service nodes
+Distrib_SSH_Key()
 {
 
 if [ $# -eq 0 ]
@@ -145,7 +138,7 @@ Distrubte ssh key to remote servers. \n
 \n
 Usage: \n
 ------------------------------------ \n
-Distrib-SSH_Key \ \n
+Distrib_SSH_Key \ \n
 --keyid="~/.ssh/id_rsa.pub" \ \n
 --hosts="172.16.1.{1..100}" \ \n
 --mutual-trust=yes \ \n
@@ -156,7 +149,7 @@ Distrib-SSH_Key \ \n
 
 The option --from-file \n
 Your can use the --from-file option to specify \n
-the configuration file of Distrubte-SSH_Key needle. \n\n
+the configuration file of Distrubte_SSH_Key needle. \n\n
 
 Example of the file \n
 # This is a comment.\n
@@ -267,7 +260,7 @@ fi
    # Check keyid file exists
    if [ ! -f "$keyid" ] ; then
       echo -e "\033[31m Not found public key file \033[0m [ $keyid ] "
-      echo -e " Ensure or Generate key file by Create-SSH_Key --key-id=~/.ssh/id_rsa if needed."
+      echo -e " Ensure or Generate key file by Create_SSH_Key --key-id=~/.ssh/id_rsa if needed."
       return 1
    fi
 
@@ -346,7 +339,7 @@ fi
    #
    # Register the SSH's key to /etc/ssh/ssh_config
    #
-   Registe-SSH_Key "$keyid"
+   Registe_SSH_Key "$keyid"
 
    #
    # Choose & Execute Mutual-trust do
@@ -372,7 +365,7 @@ fi
             
             #
             # Registe remote host Mutual-Trust
-            Registe-Mutual-Trust "$_keyid" \
+            Registe_Mutual_Trust "$_keyid" \
                "$ssh_user" "$ssh_user@$ip -p $ssh_port" "$f"       
          done
          #
@@ -385,7 +378,7 @@ fi
 
 #
 # Mutual-Trust
-Registe-Mutual-Trust()
+Registe_Mutual_Trust()
 {
 
    if [ $# -eq 0 ]
@@ -401,7 +394,7 @@ Register remote host Mutual-Trust. \n
 
 Usage:\n
 --------------------\n
-Registe-Mutual-Trust \n
+Registe_Mutual_Trust \n
 "KEYID file" \ \n 
 "SSH's LOGIN" \ \n
 "SSH's OPTIONS." \ \n
@@ -410,7 +403,7 @@ Registe-Mutual-Trust \n
 \n\n
 
 Example:\n
-Registe-Mutual-Trust "/root/.ssh/my_id_rsa" "root" "root@172.16.1.100 -p 22" "/tmp/my-trust_hosts"
+Registe_Mutual_Trust "/root/.ssh/my_id_rsa" "root" "root@172.16.1.100 -p 22" "/tmp/my-trust_hosts"
 \n
 EOF`
    return 1
@@ -489,7 +482,7 @@ EOF`
 
 #
 # Register a SSH's private key to /etc/ssh/ssh_config
-Registe-SSH_Key()
+Registe_SSH_Key()
 {
 
 if [ $# -eq 0 ]
@@ -503,7 +496,7 @@ Registe SSH identity file to /etc/ssh/ssh_config \n\n
 
 Usage: \n
 --------------- \n
-Registe-SSH_Key "SSH's identity file path." \n
+Registe_SSH_Key "SSH's identity file path." \n
 ---------------------------------------------------- \n
 EOF
 \n`
@@ -523,13 +516,13 @@ Host *
 }
 
 # UnRegister a SSH's private key from /etc/ssh/ssh_config
-UnRegister-SSH_Key()
+UnRegister_SSH_Key()
 {
    echo -e "UnRegister ssh's key ."
 }
 
 # Check & Install SSH's password Plugin sshpass
-Install-Soft_WhenUninstalled()
+Install_Soft_WhenUninstalled()
 {
-   echo -e "Install-Soft-WhenUnInstalled ."
+   echo -e "Install_Soft-WhenUnInstalled ."
 }
