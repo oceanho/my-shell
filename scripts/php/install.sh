@@ -130,7 +130,9 @@ fi
 /bin/rm -f /application/php &>/dev/null
 ln -s /application/php-5.5.32 /application/php
 
+echo -e '
+# Created By OceanHo autodeploy
+/application/php/sbin/php-fpm' >>/etc/rc.local
+
 echo -e "\033[32m Done. \033[0m"
 exit 0
-
-
