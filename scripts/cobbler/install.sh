@@ -34,6 +34,25 @@ dhcpd_bind_net_prefix="172.16.1"
 dhcpd_bind_net_subnet="172.16.1.61"
 dhcpd_bind_net_netmask="255.255.255.0"
 
+# 显示帮助
+function help()
+{
+    echo -e `
+    \n
+cat <<EOF
+    功能\n
+    一键实现Cobbler程序安装和部署\n\n
+
+    参数\n
+    cobbler-server-ip，指定cobbler settings的server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
+    cobbler-next-server-ip，指定cobbler settings的next-server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
+    net-auto-dev，指定自动获取cobbler网络参数相关的配置参数网卡设备，默认eth1
+    \n
+    \n
+EOF
+    `
+}
+
 case "$1" in
     "-h|--help|help|-help")
         help
@@ -67,22 +86,6 @@ do
     shift
 done
 
-# 显示帮助
-function help()
-{
-    echo -e `
-    \n
-cat <<EOF
-    功能\n
-    一键实现Cobbler程序安装和部署\n\n
-
-    参数\n
-    cobbler-server-ip，指定cobbler settings的server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
-    cobbler-next-server-ip，指定cobbler settings的next-server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
-    net-auto-dev，指定自动获取cobbler网络参数相关的配置参数网卡设备，默认eth1
-EOF
-    `
-}
 
 #
 # 根据传入的参数，初始化一些必须的参数，比如绑定dhcpd服务的网段地址，cobbler settings配置文件中涉及到的server的ip地址等参数的初始化
