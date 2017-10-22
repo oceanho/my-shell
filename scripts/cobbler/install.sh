@@ -85,10 +85,7 @@ function configure_cobbler_services()
     configure_dhcp_template
     configure_tftpd
     configure_httpd
-    
-    #configure_dhcp_template && \
-    #configure_tftpd && \
-    #configure_httpd
+
     cp /etc/cobbler/settings{,$(date +%s).ori}    # 备份
 
     # 修改配置文件
@@ -108,6 +105,7 @@ function main()
     configure_cobbler_services
     sync_configure
     restart_services
+    cobbler get-loaders
     sync_configure
     cobbler check
 }
