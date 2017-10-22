@@ -171,8 +171,9 @@ function configure_dhcp_template()
     echo -e "\033[36m Configure dhcp.template \033[0m"
     cp /etc/cobbler/dhcp.template{,$(date +%s).ori}
     wget -O /etc/cobbler/dhcp.template ${dhcpd_template_geturl}
-    sed "21s#.*#subnet $dhcpd_bind_net_subnet netmask $dhcpd_bind_net_netmask {#" /etc/cobbler/dhcp.template
-    sed "23s#.*#range dynamic-bootp        ${dhcpd_bind_net_subnet}100 ${dhcpd_bind_net_subnet}254;#" /etc/cobbler/dhcp.template
+    sed -i "21s#.*#subnet $dhcpd_bind_net_subnet netmask $dhcpd_bind_net_netmask {#" /etc/cobbler/dhcp.template
+    sed -i "22s#.*#     option subnet-mask ${dhcpd_bind_net_subnet}#" /etc/cobbler/dhcp.template
+    sed -i "23s#.*#     range dynamic-bootp        ${dhcpd_bind_net_prefix}100 ${dhcpd_bind_net_prefix}254;#" /etc/cobbler/dhcp.template
 }
 
 
