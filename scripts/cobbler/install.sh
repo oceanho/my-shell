@@ -123,6 +123,14 @@ function init_param()
             dhcpd_bind_net_netmask="255.255.255.0"
         ;;
     esac
+    if [ "$cobbler_server_ip" == "auto" ]
+    then
+        cobbler_server_ip=$str_ip
+    fi
+    if [ "$cobbler_next_server_ip" == "auto" ]
+    then
+        cobbler_next_server_ip=$str_ip
+    fi
 }
 
 #
