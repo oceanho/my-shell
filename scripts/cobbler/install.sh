@@ -50,8 +50,8 @@ until [ $# -eq 0 ]
 do
     if grep -q "[a-z-]+=.*"<<<"$1" 
     then
-        k=$(sed -r 's#([a-z-]+)=.*#\1#g')
-        v=$(sed -r 's#[a-z-]+=(.*)#\1#g')
+        k=$(sed -r 's#([a-z-]+)=.*#\1#g' <<<"$1")
+        v=$(sed -r 's#[a-z-]+=(.*)#\1#g' <<<"$1")
         case "$k" in
             "cobbler-server-ip" )
                 cobbler_server_ip=$v
@@ -64,6 +64,7 @@ do
             ;;
         esac
     fi
+    shift
 done
 
 # 显示帮助
@@ -71,7 +72,7 @@ function help()
 {
     echo -e `
     \n
-    cat <<EOF
+cat <<EOF
     功能\n
     一键实现Cobbler程序安装和部署\n\n
 
@@ -79,7 +80,7 @@ function help()
     cobbler-server-ip，指定cobbler settings的server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
     cobbler-next-server-ip，指定cobbler settings的next-server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
     net-auto-dev，指定自动获取cobbler网络参数相关的配置参数网卡设备，默认eth1
-    EOF
+EOF
     `
 }
 
