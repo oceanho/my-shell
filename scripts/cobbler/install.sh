@@ -38,8 +38,11 @@ dhcpd_bind_net_netmask="255.255.255.0"
 function help()
 {
     echo -e `
+    clear
     \n
+    \033[36m
 cat <<EOF
+    \n
     功能\n
     一键实现Cobbler程序安装和部署\n\n
 
@@ -49,6 +52,7 @@ cat <<EOF
     net-auto-dev，指定自动获取cobbler网络参数相关的配置参数网卡设备，默认eth1
     \n
     \n
+    \033[0m
 EOF
     `
 }
