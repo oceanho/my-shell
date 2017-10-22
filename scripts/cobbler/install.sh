@@ -12,7 +12,7 @@ function install_pre_require()
     echo -e "\033[36m Installing requires \033[0m"
     if [ `yum --disablerepo=\* --enablerepo=epel repolist | grep -c epel` -eq 0 ]
     then
-        wget -O /etc/yum.repo.d/epel.repo http://mirrors.aliyun.com/repo/epel-${os_release_ver}.repo
+        wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-${os_release_ver}.repo
     fi
     echo -e "\033[32m requires Completed. \033[0m"
 }
