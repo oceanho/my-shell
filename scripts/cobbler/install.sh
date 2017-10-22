@@ -54,7 +54,7 @@ EOF
 }
 
 case "$1" in
-    "-h|--help|help|-help")
+    -h|--help|help|-help )
         help
         exit 0
     ;;
