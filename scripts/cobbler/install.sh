@@ -48,7 +48,7 @@ esac
 # key=value，比如 net-auto-dev=eth1
 until [ $# -eq 0 ]
 do
-    if [ egrep -q "[a-z-]+=.*"<<<"$1" ]
+    if grep -q "[a-z-]+=.*"<<<"$1" 
     then
         k=$(sed -r 's#([a-z-]+)=.*#\1#g')
         v=$(sed -r 's#[a-z-]+=(.*)#\1#g')
