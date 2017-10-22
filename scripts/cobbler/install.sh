@@ -67,9 +67,16 @@ function sync_configure()
 function restart_services()
 {
     echo -e "\033[36m Restart cobbler's services \033[0m"
-    service cobblerd restart
-    /etc/init.d/httpd restart
-    /etc/init.d/xinetd restart
+    if [ $os_release_ver -ne 7 ]
+    then
+        /etc/init.d/cobblerd restart
+        /etc/init.d/httpd restart
+        /etc/init.d/xinetd restart
+    else
+        systemctl restart cobblerd.service
+        systemctl restart httpd.service
+        systemctl restart xinet.service
+    fi
 }
 
 function configure_cobbler_services()
