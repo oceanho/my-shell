@@ -102,7 +102,7 @@ function init_param()
         return 1
     fi
 
-    str_ip="${str#%/*}"
+    str_ip="${str%/*}"
     str_netmask="${str#*/}"
 
     #
