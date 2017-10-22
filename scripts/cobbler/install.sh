@@ -241,6 +241,10 @@ function configure_cobbler_services()
 # 程序入口
 function main()
 {
+
+    # 初始化参数
+    init_param
+
     install_pre_require
     install_cobbler_softs
     configure_cobbler_services
@@ -250,9 +254,6 @@ function main()
     sync_configure
     cobbler check
 }
-
-# 首先初始化参数
-init_param
 
 # 执行安装程序操作
 main
