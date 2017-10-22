@@ -21,7 +21,7 @@ function install_cobbler_softs()
 {
     echo -e "\033[36m Installing cobbler-softs \033[0m"
     fix_missing_packages_for_centos7_epel
-    yum --disablerepo=\* --enablerepo=base,epel -y install cobbler cobbler-web dhcp tftp-server pykickstart httpd
+    yum -y install cobbler cobbler-web dhcp tftp-server pykickstart httpd
     if [ $? -ne 0 ]
     then
         echo -e "\033[31m Action failed. \033[0m"
