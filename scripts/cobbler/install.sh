@@ -71,10 +71,10 @@ esac
 # key=value，比如 net-auto-dev=eth1
 until [ $# -eq 0 ]
 do
-    if grep -q "[a-z-]+=.*"<<<"$1" 
+    if egrep -q "[a-z-]+=.*"<<<"$1" 
     then
-        k=$(sed -r 's#([a-z-]+)=.*#\1#g' <<<"$1")
-        v=$(sed -r 's#[a-z-]+=(.*)#\1#g' <<<"$1")
+        k=$(sed -nr 's#([a-z-]+)=.*#\1#g' <<<"$1")
+        v=$(sed -nr 's#[a-z-]+=(.*)#\1#g' <<<"$1")
         case "$k" in
             "cobbler-server-ip" )
                 cobbler_server_ip=$v
@@ -83,7 +83,7 @@ do
                 cobbler_next_server_ip=$v
             ;;
             "net-auto-dev" )
-                net_autp_dev=$v
+                net_auto_dev=$v
             ;;
         esac
     fi
@@ -101,6 +101,7 @@ function init_param()
         echo -e "\033[31m 获取网卡配置信息失败. \033[0m"
         return 1
     fi
+    
     str_ip="${str#*/}"
     str_netmask="${str%*/}"
 
