@@ -109,17 +109,17 @@ function init_param()
     # 以下的写法只能支持 8/16/24 子网
     case $str_netmask in
         "8" )
-            dhcpd_bind_net_prefix=`egrep -o "([0-9]+.){1})" <<<$str_ip`
+            dhcpd_bind_net_prefix=`egrep -o "([0-9]+.){1}" <<<$str_ip`
             dhcpd_bind_net_subnet="${dhcpd_bind_net_prefix}0.0.0"
             dhcpd_bind_net_netmask="255.0.0.0"
         ;;
         "16" )
-            dhcpd_bind_net_prefix=`egrep -o "([0-9]+.){2})" <<<$str_ip`
+            dhcpd_bind_net_prefix=`egrep -o "([0-9]+.){2}" <<<$str_ip`
             dhcpd_bind_net_subnet="${dhcpd_bind_net_prefix}0.0"
             dhcpd_bind_net_netmask="255.255.0.0"
         ;;
         "24" )
-            dhcpd_bind_net_prefix=`egrep -o "([0-9]+.){3})" <<<$str_ip`
+            dhcpd_bind_net_prefix=`egrep -o "([0-9]+.){3}" <<<$str_ip`
             dhcpd_bind_net_subnet="${dhcpd_bind_net_prefix}0"
             dhcpd_bind_net_netmask="255.255.255.0"
         ;;
