@@ -74,13 +74,18 @@ function restart_services()
         /etc/init.d/xinetd restart
     else
         systemctl restart cobblerd.service
+        systemctl restart cobblerd.service
         systemctl restart httpd.service
-        systemctl restart xinet.service
+        systemctl restart xinetd.service
     fi
 }
 
 function configure_cobbler_services()
 {
+    configure_dhcp_template
+    configure_tftpd
+    configure_httpd
+    
     #configure_dhcp_template && \
     #configure_tftpd && \
     #configure_httpd
