@@ -4,7 +4,7 @@
 # Created by OceanHo(gzhehai@foxmail.com) AT 2017-10-22
 
 os_release_ver=`sed -r 's#[a-zA-Z ]+(5|6|7)\..*#\1#g' /etc/redhat-release`
-http_url="https://github.com/"
+http_dhcpd_template_url="https://raw.githubusercontent.com/oceanho/my-shell/master/scripts/cobbler/dhcpd_172-16-1-0_24.template"
 
 # YUM of epel 
 function install_pre_require()
@@ -43,7 +43,7 @@ function fix_missing_packages_for_centos7_epel()
 function configure_dhcp_template()
 {
     cp /etc/cobbler/dhcp.template{,$(date +%s).ori}
-    wget -O /etc/cobbler/dhcp.template $http_url/cobbler/dhcpd_172-16-1-0_24.template
+    wget -O /etc/cobbler/dhcp.template ${http_dhcpd_template_url}
 }
 
 
