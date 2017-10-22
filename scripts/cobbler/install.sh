@@ -229,8 +229,8 @@ function configure_cobbler_services()
     cp /etc/cobbler/settings{,$(date +%s).ori}    # 备份
 
     # 修改配置文件
-    sed -i "s/server: 127.0.0.1/server: ${cobbler_server_ip}/" /etc/cobbler/settings
-    sed -i "s/next_server: 127.0.0.1/next_server: ${cobbler_next_server_ip}/" /etc/cobbler/settings
+    sed -i "s/server: .*/server: ${cobbler_server_ip}/" /etc/cobbler/settings
+    sed -i "s/next_server: .*/next_server: ${cobbler_next_server_ip}/" /etc/cobbler/settings
     sed -i 's/manage_dhcp: 0/manage_dhcp: 1/' /etc/cobbler/settings
     sed -i 's/pxe_just_once: 0/pxe_just_once: 1/' /etc/cobbler/settings  # 限制客户端只能安装一次系统
     sed -ri "/default_password_crypted/s#(.*: ).*#\1\"`openssl passwd -1 -salt 'oceanhoasdhakdhakjs' '123456'`\"#" /etc/cobbler/settings
