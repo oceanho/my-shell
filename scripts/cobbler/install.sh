@@ -101,9 +101,9 @@ function init_param()
         echo -e "\033[31m 获取网卡配置信息失败. \033[0m"
         return 1
     fi
-    
-    str_ip="${str#*/}"
-    str_netmask="${str%*/}"
+
+    str_ip="${str#%/*}"
+    str_netmask="${str#*/}"
 
     #
     # 以下的写法只能支持 8/16/24 子网
@@ -124,6 +124,7 @@ function init_param()
             dhcpd_bind_net_netmask="255.255.255.0"
         ;;
     esac
+
     if [ "$cobbler_server_ip" == "auto" ]
     then
         cobbler_server_ip=$str_ip
