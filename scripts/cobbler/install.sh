@@ -73,8 +73,8 @@ until [ $# -eq 0 ]
 do
     if egrep -q "[a-z-]+=.*"<<<"$1" 
     then
-        k=$(sed -nr 's#([a-z-]+)=.*#\1#g' <<<"$1")
-        v=$(sed -nr 's#[a-z-]+=(.*)#\1#g' <<<"$1")
+        k=$(sed -r 's#([a-z-]+)=.*#\1#g' <<<"$1")
+        v=$(sed -r 's#[a-z-]+=(.*)#\1#g' <<<"$1")
         case "$k" in
             "cobbler-server-ip" )
                 cobbler_server_ip=$v
