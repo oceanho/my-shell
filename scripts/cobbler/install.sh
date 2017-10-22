@@ -31,7 +31,7 @@ net_auto_dev="eth1"
 dhcpd_template_geturl="https://raw.githubusercontent.com/oceanho/my-shell/master/scripts/cobbler/dhcpd_172-16-1-0_24.template"
 
 dhcpd_bind_net_prefix="172.16.1"
-dhcpd_bind_net_subnet="172.16.1.61"
+dhcpd_bind_net_subnet="172.16.1.0"
 dhcpd_bind_net_netmask="255.255.255.0"
 
 # 显示帮助
@@ -39,9 +39,9 @@ function help()
 {
     echo -e `
     clear
+cat <<EOF
     \n
     \033[36m
-cat <<EOF
     \n
     功能\n
     一键实现Cobbler程序安装和部署\n\n
