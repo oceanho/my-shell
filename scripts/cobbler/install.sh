@@ -44,7 +44,9 @@ cat <<EOF
     \033[36m
     \n
     功能\n
-    一键实现Cobbler程序安装和部署\n\n
+    一键实现Cobbler程序安装和部署
+    \n
+    \n
 
     参数\n
     cobbler-server-ip，指定cobbler settings的server-ip参数，默认从net-auto-dev网卡设备中自动获取\n
@@ -52,6 +54,15 @@ cat <<EOF
     net-auto-dev，指定自动获取cobbler网络参数相关的配置参数网卡设备，默认eth1
     \n
     \n
+
+    举例\n
+    1、使用ens34网卡设备安装并绑定cobbler的服务（dhcp/tftp）\n
+    ----------------------------------------------------
+    sh $# cobbler-server-ip=auto cobbler-next-server-ip=auto net-auto-dev=ens34 \n
+
+    2、手动指定cobbler-server-ip 与 next-server-ip，dhcp.template 的子网,掩码等信息自动从eth1网卡上获取
+    -------------------------------------------------------------------------------------------
+    sh $# cobbler-server-ip=auto cobbler-next-server-ip=auto net-auto-dev=ens34 \n
     \033[0m
 EOF
     `
@@ -183,7 +194,7 @@ function configure_dhcp_template()
     wget -O /etc/cobbler/dhcp.template ${dhcpd_template_geturl}
     sed -i "21s#.*#subnet $dhcpd_bind_net_subnet netmask $dhcpd_bind_net_netmask {#" /etc/cobbler/dhcp.template
     sed -i "22s#.*#     option subnet-mask        ${dhcpd_bind_net_netmask};#" /etc/cobbler/dhcp.template
-    sed -i "23s#.*#     range dynamic-bootp        ${dhcpd_bind_net_prefix}.100 ${dhcpd_bind_net_prefix}.254;#" /etc/cobbler/dhcp.template
+    sed -i "23s#.*#     range dynamic-bootp        ${dhcpd_bind_net_prefix}100 ${dhcpd_bind_net_prefix}254;#" /etc/cobbler/dhcp.template
 }
 
 
