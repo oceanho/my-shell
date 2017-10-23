@@ -172,6 +172,9 @@ function install_cobbler_softs()
         echo -e "\033[31m Action failed. \033[0m"
         return 1
     fi
+
+    # 安装xinetd服务
+    yum -y install xinetd
     echo -e "\033[32m cobbler-softs Completed. \033[0m"
 }
 
