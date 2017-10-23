@@ -57,11 +57,11 @@ cat <<EOF
 
     举例\n
     1、使用ens34网卡设备安装并绑定cobbler的服务（dhcp/tftp）\n
-    ----------------------------------------------------
+    ----------------------------------------------------\n
     sh $# cobbler-server-ip=auto cobbler-next-server-ip=auto net-auto-dev=ens34 \n
 
-    2、手动指定cobbler-server-ip 与 next-server-ip，dhcp.template 的子网,掩码等信息自动从eth1网卡上获取
-    -------------------------------------------------------------------------------------------
+    2、手动指定cobbler-server-ip 与 next-server-ip，dhcp.template 的子网,掩码等信息自动从eth1网卡上获取\n
+    -------------------------------------------------------------------------------------------\n
     sh $# cobbler-server-ip=auto cobbler-next-server-ip=auto net-auto-dev=ens34 \n
     \033[0m
 EOF
