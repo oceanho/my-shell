@@ -44,7 +44,7 @@ cat <<EOF
     \033[36m
     \n
     功能\n
-    一键实现Cobbler程序安装和部署
+    实现Cobbler程序一键安装和部署
     \n
     \n
 
