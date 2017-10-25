@@ -4,11 +4,10 @@ func SetTitle()
     if expand("%:e") == 'sh'  
         call setline(1,"#!/bin/bash")
         call setline(2, "#")  
-        call setline(3, "# Todo:")  
-        call setline(4, "#  ")
-        call setline(5, "# Created By OceanHo(gzhehai@foxmail.com) AT ".strftime("%F %T"))
-        call setline(6, "#")
-        call cursor(4,3)
+        call setline(3, "#  ")
+        call setline(4, "# Created By OceanHo(gzhehai@foxmail.com) AT ".strftime("%F"))
+        call setline(5, "#")
+        call cursor(3,3)
     endif
 endfunc
 

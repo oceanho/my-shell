@@ -10,7 +10,7 @@
 # $2: message text
 function echo_text()
 {
-   echo -e "\033[${1} ${2} [\033[0m"
+   echo -e "\033[${1} ${2} \033[0m"
 }
 
 

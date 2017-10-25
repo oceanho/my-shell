@@ -5,4 +5,4 @@
 # Created By OceanHo(gzhehai@foxmail.com) AT 2017-10-26 01:39:19
 #
 
-/bin/cp -f ./files/vimrc ~/.vimrc
+/bin/cp -f `dirname $0`/files/vimrc ~/.vimrc
