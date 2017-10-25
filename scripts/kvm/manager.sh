@@ -19,7 +19,7 @@ EtcScriptRootDir="$ScriptRootDir/etc"
 # More INFO to https://www.github.com/oceanho/my-shell
 #
 my_shell_base="https://raw.githubusercontent.com/oceanho/my-shell"
-my_shell_echo_lib_url="$my_shell_base/master/scripts/etc/lib/oceanho-echo-lib.sh"
+my_shell_echo_lib_url="$my_shell_base/master/scripts/etc/lib/ocean-echo-lib.sh"
 if [ ! -f $EtcScriptRootDir/lib/oceanho-echo-lib.sh  ];then
    mkdir -p $EtcScriptRootDir/lib/
    which wget >/dev/null 2>&1 || yum -y install wget &>/dev/null
