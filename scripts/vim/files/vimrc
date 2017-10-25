@@ -1,0 +1,17 @@
+autocmd BufNewFile *.py,*.cc,*.sh,*.java exec ":call SetTitle()"
+
+func SetTitle()  
+    if expand("%:e") == 'sh'  
+        call setline(1,"#!/bin/bash")
+        call setline(2, "#")  
+        call setline(3, "# Todo:")  
+        call setline(4, "#  ")
+        call setline(5, "# Created By OceanHo(gzhehai@foxmail.com) AT ".strftime("%F %T"))
+        call setline(6, "#")
+        call cursor(4,3)
+    endif
+endfunc
+
+set tabstop=3
+set expandtab
+set autoindent
