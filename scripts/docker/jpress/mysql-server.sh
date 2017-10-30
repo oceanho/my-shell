@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Zabbix's Server MySQL Control Tools
+# JPress's mysql db docker-container
 # Created By OceanHo(gzhehai@foxmail.com) AT 2017-10-25
 
 jpress_mysql_docker_id="ocean-jpress-server-db"
