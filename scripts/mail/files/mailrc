@@ -1,0 +1,16 @@
+
+set smtp=smtp.163.com
+set from=发件人邮箱
+set smtp-auth-user=授权人,与发件人邮箱一致
+set smtp-auth-password=授权码或者邮箱登录密码
+set smtp-auth=login
+
+以上的内容为CentOS通过 mail 命令发送邮件时候
+配置文件（/etc/mailrc）账号密码的配置信息、
+
+
+发送邮件命令mail举例
+1、echo "test mail" | mail -s "hi." "admin@foxmail.com"
+2、echo "test mail" | mail -v -s "hi." "admin@foxmail.com"
+3、从文件读取内容作为邮件发送主体：mail -v -s "hi." "admin@foxmail.com" </tmp/delivery-notify.mail
+
