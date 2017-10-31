@@ -22,10 +22,9 @@ else
    [ "$1" != "" ] && user=$1
    [ "$2" != "" ] && pass=$2
    [ "$3" != "" ] && host=$3
-   [ "$4" != "" ] && healthly_output=$4
+   [ "$4" != "" ] && port=$4
+   [ "$5" != "" ] && healthly_output=$5
 fi
-
-echo $port
 
 . /etc/profile
 
