@@ -21,7 +21,7 @@
 ### 1、简单
 `sh ./check_memcached.sh`
 
-### 2、传递参数实现指定主机上MySQL的状态监测
+### 2、传递参数实现指定主机上Memcached的状态监测
 ```
   sh ./check_memcached.sh "IP" "端口" "Memcached状态是健康时输出的返回值"
   比如：sh ./check_memcached.sh  10.0.0.200 11211 "ok"
