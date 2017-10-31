@@ -1,0 +1,5 @@
+user=root
+pass=123456
+host=localhost
+port=6603
+healthly_output="\033[32m MySQL Service is Healthly. \033[0m"
