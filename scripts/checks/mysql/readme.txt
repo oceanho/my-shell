@@ -29,4 +29,10 @@
    说明：--security 表示使用安全的方式获取MySQL授权账号密码,
          --security 必须是第一个参数.第二个参数表示MySQL登录授权账号密码文件路径,最好用绝对路径.
 
+   文件(/etc/checks/mysql_check_auth)内容：
+   user=root
+   pass=123456
+   host=localhost
+   port=3306
+   healthly_output="\033[32m MySQL Service is Healthly. \033[0m"
 ------------------------------------------------------------------------------------------------
