@@ -58,10 +58,10 @@ fi
 
 # 02. Create Rsync's Password file
 if [ ! -f $Auth_PasswordFile ] ; then
-   cp ./rsync.password /etc/ -f
+   cp ./files/rsync.password /etc/ -f
 else
    if [ $Process_ConfigureMode == "force" ] ; then
-      cp ./rsync.password /etc/ -f
+      cp ./files/rsync.password /etc/ -f
    fi
 fi
 if [ -f $Auth_PasswordFile ] ; then
@@ -75,10 +75,10 @@ fi
 # 03. Create Rsync's daemon configure file
 if [ -f "/etc/rsyncd.conf" ] ; then
    if [ $Process_ConfigureMode == "force" ] ; then
-      cp ./rsyncd.conf /etc/ -f
+      cp ./files/rsyncd.conf /etc/ -f
    fi
 else
-   cp ./rsyncd.conf /etc/ -f
+   cp ./files/rsyncd.conf /etc/ -f
 fi
 
 # 04. Create All module's directory by /etc/rsyncd.conf
