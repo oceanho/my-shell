@@ -60,6 +60,42 @@ function create_user_if_not_exists()
 {
    _id=$1
    _passwd=$2
-   ! id $_id &>/dev/null && useradd $_id
-   echo $_passwd | passwd --stdin $_id
+   ! id $_id &>/dev/null && useradd $_id >/dev/null || return 1
+   echo $_passwd | passwd --stdin $_id >/dev/null
+}
+
+#
+# 创建用户
+function create_user()
+{
+   pass="$2"
+   passLen=20
+   [ expr 1 + "$3" &>/dev/null ] && passLen=$3
+   [ "$pass" == "" ] && pass=` uuidgen | tr [0-9-] [a-z] | cut -c -$passLen`
+   create_user_if_not_exists $1 $pass && echo $pass || return 1
+}
+
+#
+# 批量创建用户
+function create_users()
+{
+   pattern="$1"
+   userListDb="/tmp/userListDb-$(date +%s)"
+   if ! egrep -q -i "[0-9a-z]+\{[0-9a-z]+\.\.[0-9a-z]+\}" <<< $pattern
+   then
+      echo -e "\033[31m Pattern Empty or Invalid. $pattern \033[0m"
+      return 1
+   fi
+   
+   mkdir -p `dirname $userListDb`
+   
+   for user in `echo "echo $pattern" | bash`
+   do
+      pass=`create_user $user`
+      if [ $? -eq 0 ]
+      then
+         echo $user:$pass >> $userListDb
+      fi
+   done
+   echo -e "\033[32m User Created Done.\033[0m user pass file: $userListDb"
 }
