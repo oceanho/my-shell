@@ -151,10 +151,13 @@ downloadFileTo()
 
 #
 # 只有传递三个参数且第一个参数是 sync 才执行同步操作,其它的显示帮助菜单
-if [ "$1" == "sync" -a $# -eq 3 ]
+if [ "$1" == "sync" ]
 then
-   start_sync "$2" "$3"
-   exit 0
+   if [ $# -eq 3 ]
+   then
+      start_sync "$2" "$3"
+      exit 0
+   fi
 fi
 
 help
