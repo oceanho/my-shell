@@ -4,8 +4,6 @@
 # Created By OceanHo(gzhehai@foxmail.com) AT 2016-10-31
 #
 
-. /etc/init.d/functions
-
 repoUrl="http://repo.zabbix.com/"
 repoSaveToDir="/data/yum-repos/zabbix/"
 
@@ -30,6 +28,17 @@ Zabbix官方yum仓库爬虫同步脚本工具
 EOF
 `
 "
+}
+
+action()
+{
+   local color="\033[32m"
+   local result="OK"
+   "$2" || {
+      color="\033[31m"
+      result="Failed"
+   }
+   echo -e "$1 \t\t $color [ $result ] \033[0m"
 }
 
 start_sync()
