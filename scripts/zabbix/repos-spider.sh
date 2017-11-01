@@ -137,7 +137,7 @@ get_files_from_url()
    local htmlId="$tempFileDirHtmls/`echo $1 | md5sum | awk '{print $1}'`"
    if [ ! -f $htmlId ]
    then
-      printf "\033[36m获取远程目录/文件列表,URL:$1\033[0m\n"
+      printf "\033[36m Get Remote Dir Files,URL:$1\033[0m\n"
       /usr/bin/curl -L -s -o "$htmlId" "$1" || {
          action "网络异常,获取列表失败." /bin/false
          #
