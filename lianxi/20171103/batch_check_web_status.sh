@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  
+# 批量检查站点是否正常示例 
 # Created By OceanHo(gzhehai@foxmail.com) AT 2017-11-03
 #
 

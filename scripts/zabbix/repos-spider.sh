@@ -13,6 +13,9 @@ tempFileDirHtmls="$tempFileDir/html-files"
 failedUrlList="$tempFileDir/failed-url-$(date +%s).txt"
 failedFilesList="$tempFileDir/failed-files-$(date +%s).txt"
 
+actionCtl_UseCachedList=1
+actionCtl_SkipedExistsFile=1
+
 b="$0"
 
 help()
@@ -23,7 +26,7 @@ help()
 clear
 cat <<EOF
 用途：
-\033[36m Zabbix软件包爬虫同步脚本工具 \033[0m
+\033[36m Yum软件包爬虫同步脚本 \033[0m
 
 使用方法：
 1. 指定从拥有zabbix软件仓库的远程地址开始爬虫同步到本地的/data/yum-repos/zabbix/
@@ -107,10 +110,15 @@ syncDirFiles()
 
    #
    # 循环读取文件内容
-   while read object;
+   while read object
    do
       objUrl="$1$object"
       objLocalFile="$2$object"
+      
+      #
+      # Url 解码处理
+      objLocalFile=`echo "$objLocalFile" | python -c "import sys, urllib as ul; print ul.unquote(sys.stdin.read());"`
+
       #
       # 以斜线结尾的对象,是目录,需递归遍历远程目录获取下载文件
       if isEndWithSlash "$object"
@@ -128,25 +136,26 @@ syncDirFiles()
 isEndWithSlash()
 {
    a="$1"
-   lastedStr="${a:((${#a}-1))}"
+   subStart=`expr echo "${#a}-1"`
+   lastedStr="${a:$subStart}"
    [ "$lastedStr" == "/" ] || return 1
 }
 
 get_files_from_url()
 {
    local htmlId="$tempFileDirHtmls/`echo $1 | md5sum | awk '{print $1}'`"
-   if [ ! -f $htmlId ]
+   if [ -f $htmlId -a $actionCtl_UseCacheList -eq 1 ]
    then
+      echo -e "\033[33m [ Use Cached ]\033[0m $htmlId"
+   else
       printf "\033[36m Get Remote Dir Files,URL:$1\033[0m\n"
-      /usr/bin/curl -L -s -o "$htmlId" "$1" || {
+      /usr/bin/curl --retry 3 -L -s -o "$htmlId" "$1" || {
          action "网络异常,获取列表失败." /bin/false
          #
          # 保存拉取列表失败的Url,需要支持重试功能
          echo "$htmlId $1" >>$failedUrlList
          return 128
       }
-   else
-      echo -e "\033[33m [ Use Cached ]\033[0m $htmlId"
    fi
    
    #
@@ -168,7 +177,7 @@ downloadFileTo()
       exit 127
    }
 
-   if [ -f "$1" -a "$3" == "--skip-exists" ]
+   if [ -f "$1" -a $actionCtl_SkipedExistsFile -eq 1 ]
    then
       echo -e "\033[33m [ Skipped ] \033[0m $1 "
       return 0
@@ -176,7 +185,7 @@ downloadFileTo()
 
    printf "\033[34m [ GET FILE ]\033[0m $2 \n"
    printf "         -> $1 \t"
-   /usr/bin/curl -L -s -o "$1" "$2" &>/dev/null && {
+   /usr/bin/curl --retry 3 -L -s -o "$1" "$2" &>/dev/null && {
       printf "\033[32m [ OK ] \033[0m \n"
    } || {
       printf "\033[31m [ Failed ] \033[0m \n"
