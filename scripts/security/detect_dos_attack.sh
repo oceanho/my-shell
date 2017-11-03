@@ -25,3 +25,10 @@ function listClientConnectionInfo()
 {
    getNetworkConnections | awk -F "[ ]+" '{print $1}' | uniq -c | sort -r -k 1
 }
+
+function clientAccessctl()
+{
+   case "$1" in
+      forbid )
+   esac
+}
