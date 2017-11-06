@@ -10,15 +10,22 @@ savedBaseDir="/data/yum-repos/zabbix"
 
 tempFileDir="/tmp/oceanho/zabbix-spider"
 tempFileDirHtmls="$tempFileDir/html-files"
+tempFileDirUrlList="$tempFileDir/url-lists"
+
 failedUrlList="$tempFileDir/failed-url-$(date +%s).txt"
 failedFilesList="$tempFileDir/failed-files-$(date +%s).txt"
+latedGetFileObject="$tempFileDir/lated-get-file-$(date +%s).txt"
 
 actionCtl_UseCachedList=1
 actionCtl_SkipedExistsFile=1
 
+actionVar_ExitMode="\033[32m 正常 \033[0m"
+
 b="$0"
 
-help()
+#
+# 显示帮助
+function help()
 {
    echo -e \
 "
@@ -38,9 +45,36 @@ cat <<EOF
 EOF
 `
 "
+exit 0
 }
 
-start_sync()
+#
+# 执行脚本前的执行函数
+function Script_before()
+{
+   [ -d $tempFileDirHtmls ] || mkdir -p $tempFileDirHtmls
+   [ -d $tempFileDirUrlList ] || mkdir -p $tempFileDirUrlList
+}
+
+#
+# 执行脚本后的执行函数
+function Script_post()
+{
+   printf "\n\n
+`
+cat <<EOF
+退出情况: $actionVar_ExitMode
+获取Url失败信息文件 -> $failedUrlList
+下载软件失败信息文件 -> $failedFilesList
+最新下载内容所在文件 -> $latedGetFileObject
+EOF
+`"
+   echo -e "\n\n"
+}
+
+#
+# 同步入口函数
+function start_sync()
 {
    #
    # $1
@@ -75,6 +109,7 @@ start_sync()
    # 数据存储根目录
    savedBaseDir="$2" 
    
+   #
    # 清理异常文件
    find $2 -type f -size 0 -exec rm -f {} \; &>/dev/null
 
@@ -83,7 +118,17 @@ start_sync()
    syncDirFiles "$1" ""
 }
 
-syncDirFiles()
+#
+# 重试同步入口函数
+function retry_sync()
+{
+   echo "Unsupport."
+}
+
+#
+# 通过http协议
+# 抓取远程目录的可用目录/文件列表并同步
+function syncDirFiles()
 {
    #
    #
@@ -102,7 +147,10 @@ syncDirFiles()
    local objUrl=""
    local objLocalFile=""
 
-   local objectId="$tempFileDir/objectid-`uuidgen`"
+   local objectId="$tempFileDirUrlList/`uuidgen`"
+   
+   #
+   # 获取指定Url的文件/目录链接地址
    get_files_from_url "$1" "$objectId" || {
       echo "$1" >> $failedUrlList
       return 1
@@ -117,7 +165,8 @@ syncDirFiles()
       
       #
       # Url 解码处理
-      objLocalFile=`echo "$objLocalFile" | python -c "import sys, urllib as ul; print ul.unquote(sys.stdin.read());"`
+      objLocalFile=`echo "$objLocalFile" | python -c \
+         "import sys, urllib as ul; print ul.unquote(sys.stdin.read());"`
 
       #
       # 以斜线结尾的对象,是目录,需递归遍历远程目录获取下载文件
@@ -126,31 +175,36 @@ syncDirFiles()
          syncDirFiles "$objUrl" "$objLocalFile"
          continue
       fi
-      downloadFileTo "${savedBaseDir}${objLocalFile}" "$objUrl" --skip-exists
+      downloadFileTo "${savedBaseDir}${objLocalFile}" "$objUrl"
    done <$objectId
+
    #
    # 清理文件
    rm -f $objectId
 }
 
-isEndWithSlash()
+#
+# 判断字符串是否以 / 结尾
+function isEndWithSlash()
 {
    a="$1"
-   subStart=`expr echo "${#a}-1"`
+   subStart=`expr ${#a}-1`
    lastedStr="${a:$subStart}"
    [ "$lastedStr" == "/" ] || return 1
 }
 
-get_files_from_url()
+#
+# 获取指定url目录/文件列表
+function get_files_from_url()
 {
    local htmlId="$tempFileDirHtmls/`echo $1 | md5sum | awk '{print $1}'`"
-   if [ -f $htmlId -a $actionCtl_UseCacheList -eq 1 ]
+   if [ -f $htmlId -a $actionCtl_UseCachedList -eq 1 ]
    then
       echo -e "\033[33m [ Use Cached ]\033[0m $htmlId"
    else
       printf "\033[36m Get Remote Dir Files,URL:$1\033[0m\n"
       /usr/bin/curl --retry 3 -L -s -o "$htmlId" "$1" || {
-         action "网络异常,获取列表失败." /bin/false
+         action " 网络异常,获取列表失败." /bin/false
          #
          # 保存拉取列表失败的Url,需要支持重试功能
          echo "$htmlId $1" >>$failedUrlList
@@ -163,7 +217,9 @@ get_files_from_url()
    sed -nr '/href=\"\.\.\/\"/d;/http[s]?:/d;/Parent Directory/d;s#.*<a href=\"(.*)\".*#\1#gp' $htmlId >$2
 }
 
-downloadFileTo()
+#
+# 下载指定Url的文件到指定目录
+function downloadFileTo()
 {
    #
    # $1
@@ -173,7 +229,7 @@ downloadFileTo()
    #
    destdir="`dirname $1`"
    [ -d $destdir ] || mkdir -p $destdir || {
-      action "创建目录($destdir)失败." /bin/false
+      action " 创建目录($destdir)失败." /bin/false
       exit 127
    }
 
@@ -185,7 +241,15 @@ downloadFileTo()
 
    printf "\033[34m [ GET FILE ]\033[0m $2 \n"
    printf "         -> $1 \t"
-   /usr/bin/curl --retry 3 -L -s -o "$1" "$2" &>/dev/null && {
+
+   #
+   # 更新最后一个下载的文件,因为,下载的这个文件.可能会被异常终止,导致下载的文件是错误的
+   # 需要在开始执行该脚本任务的时候,删除该文件.
+   echo "[ `date '+ %T %x'` ] $1 $2" > $latedGetFileObject
+   /usr/bin/curl --retry 3 -L -s -o "$1" "$2" &>/dev/null && {      
+      # 文件下载成功后
+      # 删除最后一个下载的文件记录
+      >$latedGetFileObject
       printf "\033[32m [ OK ] \033[0m \n"
    } || {
       printf "\033[31m [ Failed ] \033[0m \n"
@@ -195,14 +259,29 @@ downloadFileTo()
 }
 
 #
-# 只有传递三个参数且第一个参数是 sync 才执行同步操作,其它的显示帮助菜单
-if [ "$1" == "sync" ]
-then
-   if [ $# -eq 3 ]
-   then
-      start_sync "$2" "$3"
-      exit 0
-   fi
-fi
+# The Menu Selection
+main()
+{
+   Script_before
+   case "$1" in
+      sync ) start_sync "$2" "$3" ;;
+      retry ) retry_sync ;; 
+      * ) help ;;
+   esac
+   Script_post
+}
 
-help
+#
+# Ctrl + c 强制退出
+force_exit()
+{
+   actionVar_ExitMode="\033[31m 强制终止 \033[0m"
+   Script_post
+   exit 1
+}
+#
+# Trap the keypress：ctrl + c
+trap force_exit SIGINT
+
+main "$@"
+
