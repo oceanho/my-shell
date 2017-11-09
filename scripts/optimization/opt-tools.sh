@@ -19,13 +19,13 @@ default_minimal_services="network sshd rsyslog crond sysstat"
 function opt_services()
 {
    local services="$1"
-   [ $services == "" ] && services=$default_minimal_services
+   [ $services == "" ] && services="$default_minimal_services"
    services = `echo "$default_minimal_services" | sed 's# #|#g'`
    for service in `chkconfig --list | awk -F "[ ]+" '{print $1}'`
    do
       chkconfig $service off
    done
-   for service in `chkconfig --list | awk -op="$services" -F "[ ]+" '/p/{print $1}'`
+   for service in `chkconfig --list | awk -F "[ ]+" "/$services/{print \$1}"`
    do
       chkconfig $service on --levels 35
    done
