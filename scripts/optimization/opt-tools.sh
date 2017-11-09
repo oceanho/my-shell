@@ -25,7 +25,7 @@ function opt_services()
    do
       chkconfig $service off
    done
-   for service in `chkconfig --list | awk -F "[ ]+" "/$services/{print \$1}"`
+   for service in `chkconfig --list | awk -F "[ ]+" '{print $1}' | awk "/$services/{print \$1}"`
    do
       chkconfig $service on --levels 35
    done
