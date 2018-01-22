@@ -1,10 +1,13 @@
-FROM mysql:5.6
+FROM ubuntu:16.04
 
-# install MHA dependences packages
+# install MHA manager dependences packages
 # more about MHA info, redirect to https://yq.aliyun.com/articles/57845
 RUN set -x \
 && apt-get update \
-&& apt-get -y install libdbd-mysql-perl make sudo openssh-server openssl vim \
+&& apt-get -y install libdbd-mysql-perl libconfig-tiny-perl \
+         liblog-dispatch-perl libparallel-forkmanager-perl \
+		 libcpanplus-perl \
+		 make sudo openssh-server openssl vim \
 && rm -rf /var/lib/apt/lists/*
 
 # SSH comunication capability
@@ -14,19 +17,20 @@ ENV SSH_ROOT_PASSWORD passW0rd
 RUN echo "root:${SSH_ROOT_PASSWORD}" | chpasswd
 RUN sed -i 's#PermitRootLogin .*#PermitRootLogin yes#g' /etc/ssh/sshd_config
 
-COPY mha4mysql-node-0.57.tar.gz /mha4mysql-node-0.57.tar.gz
+COPY mha4mysql-manager-0.57.tar.gz /mha4mysql-manager-0.57.tar.gz
 
-RUN tar -xf /mha4mysql-node-0.57.tar.gz \
-&& cd /mha4mysql-node-0.57 \
+RUN tar -xf /mha4mysql-manager-0.57.tar.gz \
+&& cd /mha4mysql-manager-0.57 \
 && perl Makefile.PL \
 && make \
 && make install \
-&& rm -rf /mha4mysql-node-0.57*
+&& rm -rf /mha4mysql-manager-0.57*
 
 COPY docker-entrypoint.sh /usr/local/bin/
+RUN ln -s /usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 22
 
-CMD ["mysqld"]
+CMD ["/bin/bash"]
