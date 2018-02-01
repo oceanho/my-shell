@@ -9,9 +9,10 @@
 #    2. Linux断开某个用户的终端连接:http://woshixiguapi.blog.163.com/blog/static/192499692011114658091/
 #
 
-function run(){
+process()
+{
    _tty="`who am i | awk -F '[ ]+' '{print $2}'`"
-   if [ $? -eq 0 -a $self_tty!="" ] ; then
+   if [ $? -eq 0 -a $_tty!="" ] ; then
       for tty in `who | awk -v self=$_tty -F '[ ]+' '$2!=self{print $2}'`
       do
           #skill -9 -t $tty
@@ -25,7 +26,7 @@ function run(){
 }
 
 if [ $UID -eq 0 ]; then
-   run
+   process
 else
    echo "The operation only allowed run as root."
 fi
