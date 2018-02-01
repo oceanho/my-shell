@@ -25,7 +25,7 @@ process()
    fi
 }
 
-if [ "$whoami"=="root" ]; then
+if [ "`$whoami`"=="root" ]; then
    process
 else
    echo "The operation only allowed run as root."
