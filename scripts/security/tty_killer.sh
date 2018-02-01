@@ -12,7 +12,7 @@
 process()
 {
    _tty="`who am i | awk -F '[ ]+' '{print $2}'`"
-   if [ $? -eq 0 -a $_tty!="" ] ; then
+   if [ $? -eq 0 -a "$_tty"!="" ] ; then
       for tty in `who | awk -v self=$_tty -F '[ ]+' '$2!=self{print $2}'`
       do
           #skill -9 -t $tty
